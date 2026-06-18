@@ -14,7 +14,7 @@
           v-model="searchQuery"
           type="text" 
           placeholder="Cari nama atau role..."
-          class="w-full px-6 py-4 rounded-xl border-2 border-gray-200 bg-white text-gray-900 focus:border-primary focus:outline-none text-center font-bold placeholder:text-gray-400"
+          class="w-full px-6 py-4 rounded-xl border-2 border-gray-200 bg-white text-gray-900 focus:border-green-500 focus:outline-none text-center font-bold placeholder:text-gray-400"
         >
       </div>
 
@@ -59,7 +59,7 @@
                 {{ student.name }}
               </h3>
               
-              <p class="text-sm font-bold text-primary mb-4">
+              <p class="text-sm font-bold text-green-600 mb-4">
                 {{ student.role }}
               </p>
               
@@ -97,7 +97,7 @@ const filteredStudents = computed(() => {
 
 const getStatusColor = (status) => {
   const statusColors = {
-    'Aktif': 'bg-primary text-white',
+    'Aktif': 'bg-green-500 text-white',
     'Cuti': 'bg-yellow-500 text-white',
     'Alumni': 'bg-blue-500 text-white'
   }

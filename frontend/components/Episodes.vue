@@ -22,7 +22,7 @@
               <div class="bg-white rounded-xl overflow-hidden shadow-xl card-hover relative aspect-video border-2 border-gray-100">
                 
                 <!-- Gradient Background -->
-                <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-blue-100">
+                <div class="absolute inset-0 bg-gradient-to-br from-green-100 to-blue-100">
                 </div>
                 
                 <!-- Thumbnail Icon -->
@@ -32,10 +32,10 @@
                 
                 <!-- Overlay Content -->
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/30 to-transparent flex flex-col justify-end p-6">
-                  <span class="text-xs font-bold text-primary uppercase tracking-wider mb-2">
+                  <span class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">
                     {{ episode.category }}
                   </span>
-                  <h3 class="text-2xl font-black text-white mb-2 group-hover:text-accent transition-colors">
+                  <h3 class="text-2xl font-black text-white mb-2 group-hover:text-green-400 transition-colors">
                     {{ episode.title }}
                   </h3>
                   <p class="text-sm text-white/90 line-clamp-2 font-medium">
@@ -45,7 +45,7 @@
                 
                 <!-- Play Button Overlay -->
                 <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40">
-                  <div class="w-20 h-20 rounded-full bg-primary flex items-center justify-center shadow-2xl">
+                  <div class="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center shadow-2xl">
                     <svg class="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                     </svg>
@@ -69,7 +69,7 @@
         @click.stop
       >
         <!-- Modal Header -->
-        <div class="relative aspect-video rounded-t-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-blue-100">
+        <div class="relative aspect-video rounded-t-2xl overflow-hidden bg-gradient-to-br from-green-100 to-blue-100">
           <div class="absolute inset-0 flex items-center justify-center text-9xl opacity-60">
             {{ selectedEpisode.icon }}
           </div>
@@ -85,7 +85,7 @@
         
         <!-- Modal Content -->
         <div class="p-8">
-          <span class="inline-block px-4 py-2 rounded-full text-xs font-bold text-white mb-4 bg-primary">
+          <span class="inline-block px-4 py-2 rounded-full text-xs font-bold text-white mb-4 bg-green-500">
             {{ selectedEpisode.category }}
           </span>
           

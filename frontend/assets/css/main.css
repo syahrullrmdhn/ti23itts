@@ -10,7 +10,7 @@
 
 @layer components {
   .btn-primary {
-    @apply px-8 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark transition duration-300 text-lg shadow-lg hover:shadow-xl;
+    @apply px-8 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition duration-300 text-lg shadow-lg hover:shadow-xl;
   }
   
   .btn-secondary {
