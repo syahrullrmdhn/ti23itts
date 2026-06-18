@@ -2,8 +2,8 @@
   <section id="profil" class="py-20 bg-white">
     <div class="container mx-auto px-4">
       <div class="text-center mb-16">
-        <h2 class="font-display text-5xl md:text-6xl font-black text-dark mb-4">
-          👥 Cast & Crew
+        <h2 class="font-display text-5xl md:text-6xl font-black text-gray-900 mb-4">
+          Cast & Crew
         </h2>
         <p class="text-lg text-gray-600 font-medium">Kenalan sama anak-anak TI'23 yang masih survive!</p>
       </div>
@@ -14,7 +14,7 @@
           v-model="searchQuery"
           type="text" 
           placeholder="Cari nama atau role..."
-          class="w-full px-6 py-4 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none text-center font-bold"
+          class="w-full px-6 py-4 rounded-xl border-2 border-gray-200 bg-white text-gray-900 focus:border-primary focus:outline-none text-center font-bold placeholder:text-gray-400"
         >
       </div>
 
@@ -25,7 +25,7 @@
           :key="student.id"
           class="group relative"
         >
-          <div class="bg-white rounded-2xl overflow-hidden shadow-xl card-hover border-2 border-gray-100">
+          <div class="bg-white rounded-xl overflow-hidden shadow-xl card-hover border-2 border-gray-100">
             <!-- Photo Container with Hover Effect -->
             <div class="relative aspect-square overflow-hidden">
               <!-- Normal Photo -->
@@ -45,7 +45,7 @@
               <!-- Status Badge -->
               <div class="absolute top-4 right-4">
                 <span 
-                  class="px-3 py-1 rounded-lg text-xs font-bold text-white shadow-lg"
+                  class="px-3 py-1 rounded-lg text-xs font-bold shadow-lg"
                   :class="getStatusColor(student.status)"
                 >
                   {{ student.status }}
@@ -55,7 +55,7 @@
             
             <!-- Student Info -->
             <div class="p-6">
-              <h3 class="text-xl font-black text-dark mb-2">
+              <h3 class="text-xl font-black text-gray-900 mb-2">
                 {{ student.name }}
               </h3>
               
@@ -97,11 +97,11 @@ const filteredStudents = computed(() => {
 
 const getStatusColor = (status) => {
   const statusColors = {
-    'Aktif': 'bg-green-600',
-    'Cuti': 'bg-amber-600',
-    'Alumni': 'bg-blue-600'
+    'Aktif': 'bg-primary text-white',
+    'Cuti': 'bg-yellow-500 text-white',
+    'Alumni': 'bg-blue-500 text-white'
   }
-  return statusColors[status] || 'bg-gray-500'
+  return statusColors[status] || 'bg-gray-500 text-white'
 }
 
 onMounted(async () => {

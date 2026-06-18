@@ -1,11 +1,10 @@
 <template>
-  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50">
+  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-green-50 via-white to-emerald-50">
     <!-- Background Pattern -->
-    <div class="absolute inset-0 opacity-5">
-      <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, rgb(0 0 0 / 0.15) 1px, transparent 0); background-size: 40px 40px;"></div>
+    <div class="absolute inset-0 z-0 opacity-30">
+      <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, rgb(16 185 129 / 0.1) 1px, transparent 0); background-size: 48px 48px;"></div>
     </div>
     
-    <!-- Hero Content -->
     <div class="relative z-10 text-center px-4 max-w-6xl mx-auto">
       <div class="mb-8">
         <span class="inline-block px-6 py-2 bg-primary/10 text-primary font-bold rounded-full text-sm uppercase tracking-wider mb-6">
@@ -13,14 +12,14 @@
         </span>
       </div>
       
-      <h1 class="font-display text-6xl md:text-8xl lg:text-9xl font-black mb-6 leading-tight text-dark">
+      <h1 class="font-display text-6xl md:text-8xl lg:text-9xl font-black mb-6 leading-tight text-gray-900">
         TI'23
         <br>
         <span class="text-primary">Insiders</span>
       </h1>
       
-      <p class="text-2xl md:text-3xl font-bold text-gray-700 mb-6">
-        How fun we are! 🎉
+      <p class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">
+        How fun we are!
       </p>
       
       <p class="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto font-medium">
@@ -32,14 +31,14 @@
           href="#episodes" 
           class="btn-primary"
         >
-          🔥 Stalk Our Momen
+          Stalk Our Momen
         </a>
         
         <a 
           href="#timebox" 
           class="btn-secondary"
         >
-          ⏰ Perjalanan Kita
+          Perjalanan Kita
         </a>
       </div>
     </div>

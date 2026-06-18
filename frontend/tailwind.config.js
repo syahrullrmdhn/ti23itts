@@ -10,11 +10,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        'primary': '#2563EB',
-        'secondary': '#7C3AED',
-        'accent': '#F59E0B',
-        'dark': '#1E293B',
-        'light': '#F8FAFC',
+        'primary': '#10B981',
+        'primary-dark': '#059669',
+        'secondary': '#3B82F6',
+        'accent': '#34D399',
       },
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
