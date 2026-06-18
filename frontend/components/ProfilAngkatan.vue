@@ -1,11 +1,11 @@
 <template>
-  <section id="profil" class="py-20 bg-gradient-to-br from-fun-pink/10 via-bright-yellow/10 to-mint-green/10">
+  <section id="profil" class="py-20 bg-white">
     <div class="container mx-auto px-4">
       <div class="text-center mb-16">
-        <h2 class="font-display text-5xl md:text-6xl font-black text-gray-900 mb-4">
+        <h2 class="font-display text-5xl md:text-6xl font-black text-dark mb-4">
           👥 Cast & Crew
         </h2>
-        <p class="text-lg text-gray-600">Kenalan sama anak-anak TI'23 yang masih survive!</p>
+        <p class="text-lg text-gray-600 font-medium">Kenalan sama anak-anak TI'23 yang masih survive!</p>
       </div>
 
       <!-- Filter/Search -->
@@ -14,7 +14,7 @@
           v-model="searchQuery"
           type="text" 
           placeholder="Cari nama atau role..."
-          class="w-full px-6 py-4 rounded-full border-2 border-gray-300 focus:border-fun-pink focus:outline-none text-center font-semibold"
+          class="w-full px-6 py-4 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none text-center font-bold"
         >
       </div>
 
@@ -25,7 +25,7 @@
           :key="student.id"
           class="group relative"
         >
-          <div class="bg-white rounded-3xl overflow-hidden shadow-xl card-hover">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-xl card-hover border-2 border-gray-100">
             <!-- Photo Container with Hover Effect -->
             <div class="relative aspect-square overflow-hidden">
               <!-- Normal Photo -->
@@ -45,7 +45,7 @@
               <!-- Status Badge -->
               <div class="absolute top-4 right-4">
                 <span 
-                  class="px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg"
+                  class="px-3 py-1 rounded-lg text-xs font-bold text-white shadow-lg"
                   :class="getStatusColor(student.status)"
                 >
                   {{ student.status }}
@@ -55,16 +55,16 @@
             
             <!-- Student Info -->
             <div class="p-6">
-              <h3 class="text-xl font-black text-gray-900 mb-2">
+              <h3 class="text-xl font-black text-dark mb-2">
                 {{ student.name }}
               </h3>
               
-              <p class="text-sm font-semibold text-fun-pink mb-4">
+              <p class="text-sm font-bold text-primary mb-4">
                 {{ student.role }}
               </p>
               
               <!-- Fun Facts -->
-              <div v-if="student.fun_fact" class="text-xs text-gray-600 italic">
+              <div v-if="student.fun_fact" class="text-xs text-gray-600 italic font-medium">
                 "{{ student.fun_fact }}"
               </div>
             </div>
@@ -97,9 +97,9 @@ const filteredStudents = computed(() => {
 
 const getStatusColor = (status) => {
   const statusColors = {
-    'Aktif': 'bg-bright-blue',
-    'Cuti': 'bg-bright-yellow text-gray-900',
-    'Alumni': 'bg-mint-green text-gray-900'
+    'Aktif': 'bg-green-600',
+    'Cuti': 'bg-amber-600',
+    'Alumni': 'bg-blue-600'
   }
   return statusColors[status] || 'bg-gray-500'
 }

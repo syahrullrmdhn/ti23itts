@@ -10,16 +10,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        'bright-yellow': '#FFD93D',
-        'bright-blue': '#6BCF7F',
-        'mint-green': '#A8E6CF',
-        'fun-pink': '#FF6B9D',
-        'soft-purple': '#C3AED6',
-        'vibrant-orange': '#FF8C42',
+        'primary': '#2563EB',
+        'secondary': '#7C3AED',
+        'accent': '#F59E0B',
+        'dark': '#1E293B',
+        'light': '#F8FAFC',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Poppins', 'system-ui', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        display: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
       },
     },
   },

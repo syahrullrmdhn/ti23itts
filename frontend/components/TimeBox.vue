@@ -1,28 +1,28 @@
 <template>
-  <section id="timebox" class="py-20 bg-gradient-to-br from-mint-green/20 to-bright-blue/20">
+  <section id="timebox" class="py-20 bg-white">
     <div class="container mx-auto px-4">
       <div class="text-center mb-16">
-        <h2 class="font-display text-5xl md:text-6xl font-black text-gray-900 mb-4">
+        <h2 class="font-display text-5xl md:text-6xl font-black text-dark mb-4">
           ⏰ The Time Box
         </h2>
-        <p class="text-lg text-gray-600">Perjalanan angkatan dari awal sampai sekarang</p>
+        <p class="text-lg text-gray-600 font-medium">Perjalanan angkatan dari awal sampai sekarang</p>
       </div>
 
       <!-- Statistics Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 max-w-5xl mx-auto">
-        <div class="bg-white rounded-3xl p-8 shadow-xl card-hover border-4 border-fun-pink">
-          <div class="text-5xl font-black text-fun-pink mb-2">{{ stats.initialCount }}</div>
-          <div class="text-gray-700 font-semibold">Mahasiswa Awal</div>
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-8 shadow-xl card-hover text-white">
+          <div class="text-5xl font-black mb-2">{{ stats.initialCount }}</div>
+          <div class="font-bold text-blue-100">Mahasiswa Awal</div>
         </div>
         
-        <div class="bg-white rounded-3xl p-8 shadow-xl card-hover border-4 border-bright-yellow">
-          <div class="text-5xl font-black text-vibrant-orange mb-2">{{ stats.currentCount }}</div>
-          <div class="text-gray-700 font-semibold">Masih Survive</div>
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-8 shadow-xl card-hover text-white">
+          <div class="text-5xl font-black mb-2">{{ stats.currentCount }}</div>
+          <div class="font-bold text-purple-100">Masih Survive</div>
         </div>
         
-        <div class="bg-white rounded-3xl p-8 shadow-xl card-hover border-4 border-bright-blue">
-          <div class="text-5xl font-black text-bright-blue mb-2">{{ stats.totalSemesters }}</div>
-          <div class="text-gray-700 font-semibold">Semester Dilalui</div>
+        <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-8 shadow-xl card-hover text-white">
+          <div class="text-5xl font-black mb-2">{{ stats.totalSemesters }}</div>
+          <div class="font-bold text-amber-100">Semester Dilalui</div>
         </div>
       </div>
 
@@ -37,7 +37,7 @@
             <!-- Timeline Icon -->
             <div class="flex-shrink-0">
               <div 
-                class="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-black text-white shadow-lg"
+                class="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-black text-white shadow-lg"
                 :class="getSemesterColor(index)"
               >
                 {{ semester.icon }}
@@ -45,26 +45,27 @@
             </div>
             
             <!-- Timeline Content -->
-            <div class="flex-1 bg-white rounded-3xl p-6 shadow-xl card-hover">
-              <h3 class="text-2xl font-bold text-gray-900 mb-2">
+            <div class="flex-1 bg-slate-50 rounded-2xl p-6 shadow-lg card-hover border-l-4"
+              :class="getSemesterBorder(index)">
+              <h3 class="text-2xl font-black text-dark mb-2">
                 Semester {{ semester.semester }}
               </h3>
-              <p class="text-gray-600 mb-4">{{ semester.period }}</p>
+              <p class="text-gray-600 mb-4 font-semibold">{{ semester.period }}</p>
               
               <div class="space-y-2">
                 <div class="flex items-center gap-2">
-                  <span class="text-sm font-semibold text-gray-700">👥 Mahasiswa:</span>
-                  <span class="text-sm text-gray-600">{{ semester.studentCount }} orang</span>
+                  <span class="text-sm font-bold text-gray-700">👥 Mahasiswa:</span>
+                  <span class="text-sm text-gray-600 font-semibold">{{ semester.studentCount }} orang</span>
                 </div>
                 
                 <div class="mt-4">
-                  <p class="text-sm font-semibold text-gray-700 mb-2">👨‍🏫 Dosen:</p>
+                  <p class="text-sm font-bold text-gray-700 mb-2">👨‍🏫 Dosen:</p>
                   <div class="flex flex-wrap gap-2">
                     <span 
                       v-for="lecturer in semester.lecturers" 
                       :key="lecturer.name"
-                      class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
-                      :class="lecturer.isAnomaly ? 'bg-fun-pink text-white' : 'bg-gray-100 text-gray-700'"
+                      class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold"
+                      :class="lecturer.isAnomaly ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'"
                     >
                       {{ lecturer.name }}
                       <span v-if="lecturer.isAnomaly" class="ml-1">⚠️</span>
@@ -93,12 +94,24 @@ const timeline = ref([])
 
 const getSemesterColor = (index) => {
   const colors = [
-    'bg-fun-pink',
-    'bg-bright-yellow',
-    'bg-bright-blue',
-    'bg-mint-green',
-    'bg-vibrant-orange',
-    'bg-soft-purple'
+    'bg-blue-600',
+    'bg-purple-600',
+    'bg-amber-600',
+    'bg-green-600',
+    'bg-red-600',
+    'bg-indigo-600'
+  ]
+  return colors[index % colors.length]
+}
+
+const getSemesterBorder = (index) => {
+  const colors = [
+    'border-blue-600',
+    'border-purple-600',
+    'border-amber-600',
+    'border-green-600',
+    'border-red-600',
+    'border-indigo-600'
   ]
   return colors[index % colors.length]
 }
@@ -115,7 +128,6 @@ onMounted(async () => {
       }
     }
   } catch (error) {
-    // Fallback data for development
     stats.value = {
       initialCount: 45,
       currentCount: 38,
