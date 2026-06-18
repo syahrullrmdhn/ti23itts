@@ -9,8 +9,7 @@ class Episode extends Model
     protected $fillable = [
         'category',
         'title',
-        'icon',
-        'gradient_color',
+        'image',
         'short_description',
         'full_description',
         'date',

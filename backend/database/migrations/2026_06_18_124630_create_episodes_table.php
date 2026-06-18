@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('category');
             $table->string('title');
-            $table->string('icon');
-            $table->string('gradient_color');
+            $table->string('image');
             $table->text('short_description');
             $table->text('full_description');
             $table->string('date');

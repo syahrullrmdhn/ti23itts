@@ -19,8 +19,7 @@ class EpisodeController extends Controller
         $validated = $request->validate([
             'category' => 'required|string|max:255',
             'title' => 'required|string|max:255',
-            'icon' => 'required|string|max:10',
-            'gradient_color' => 'required|string',
+            'image' => 'required|string',
             'short_description' => 'required|string',
             'full_description' => 'required|string',
             'date' => 'required|string',
@@ -45,8 +44,7 @@ class EpisodeController extends Controller
         $validated = $request->validate([
             'category' => 'sometimes|required|string|max:255',
             'title' => 'sometimes|required|string|max:255',
-            'icon' => 'sometimes|required|string|max:10',
-            'gradient_color' => 'sometimes|required|string',
+            'image' => 'sometimes|required|string',
             'short_description' => 'sometimes|required|string',
             'full_description' => 'sometimes|required|string',
             'date' => 'sometimes|required|string',
