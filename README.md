@@ -364,8 +364,8 @@ This project is created for **TI'23 ITTS** internal use.
 
 **Made with 💖 by TI'23 ITTS**
 
-*Angkatan Teknik Informatika 2023*  
-*Institut Teknologi Telkom Surabaya*
+*Angkatan Teknologi Informasi 2023*  
+*Institut Teknologi Tangerang Selatan*
 
 [Website](https://ti23itts.my.id) • [GitHub](https://github.com/syahrullrmdhn/ti23itts)
 
