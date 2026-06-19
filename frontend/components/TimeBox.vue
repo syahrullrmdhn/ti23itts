@@ -90,6 +90,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
+const config = useRuntimeConfig()
 const stats = ref({
   initialCount: 0,
   currentCount: 0,
@@ -97,35 +98,21 @@ const stats = ref({
 })
 const timeline = ref([])
 
-onMounted(() => {
-  stats.value = {
-    initialCount: 45,
-    currentCount: 38,
-    totalSemesters: 2
-  }
-  timeline.value = [
-    {
-      id: 1,
-      semester: 1,
-      period: 'Sep 2023 - Jan 2024',
-      studentCount: 45,
-      lecturers: [
-        { name: 'Pak Budi', isAnomaly: false },
-        { name: 'Bu Siti', isAnomaly: false },
-        { name: 'Pak Anomali', isAnomaly: true }
-      ]
-    },
-    {
-      id: 2,
-      semester: 2,
-      period: 'Feb 2024 - Jun 2024',
-      studentCount: 43,
-      lecturers: [
-        { name: 'Pak Ahmad', isAnomaly: false },
-        { name: 'Bu Rina', isAnomaly: false }
-      ]
+onMounted(async () => {
+  try {
+    const data = await $fetch(`${config.public.apiBase}/timeline`)
+    stats.value = {
+      initialCount: data.initialCount,
+      currentCount: data.currentCount,
+      totalSemesters: data.semesters.length,
     }
-  ]
+    timeline.value = data.semesters.map(semester => ({
+      ...semester,
+      studentCount: semester.student_count,
+    }))
+  } catch (error) {
+    console.error('Gagal memuat timeline dari database', error)
+  }
 })
 </script>
 

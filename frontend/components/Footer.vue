@@ -9,7 +9,7 @@
             TI'23 <span class="text-green-500">INSIDERS</span>
           </h3>
           <p class="text-gray-300 font-bold leading-relaxed max-w-sm bg-gray-900 p-4 border border-gray-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            Digital Yearbook Angkatan TI 2023 ITTS. Tempat nongkrong digital yang nyimpen semua memori, dari yang keren sampai aib legendaris.
+            Digital Yearbook Angkatan TI 2023 Institut Teknologi Tangerang Selatan. Tempat nongkrong digital yang nyimpen semua memori, dari yang keren sampai aib legendaris.
           </p>
         </div>
 
@@ -53,7 +53,7 @@
       <!-- Bottom Copyright Bar -->
       <div class="border-t-4 border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
         <p class="text-sm text-gray-400 font-bold uppercase tracking-wider">
-          &copy; 2023-{{ new Date().getFullYear() }} TI'23 ITTS. All rights reserved.
+          &copy; 2023-{{ new Date().getFullYear() }} TI'23 Institut Teknologi Tangerang Selatan. All rights reserved.
         </p>
         <div class="flex items-center gap-2 text-sm text-gray-400 font-bold uppercase tracking-wider bg-gray-900 px-4 py-2 border border-gray-700">
           <span>Made with</span>

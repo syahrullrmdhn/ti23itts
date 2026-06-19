@@ -119,6 +119,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
+const config = useRuntimeConfig()
+const { mediaUrl } = useApiMedia()
 const episodes = ref([])
 const selectedEpisode = ref(null)
 
@@ -131,59 +133,18 @@ const closeModal = () => {
   document.body.style.overflow = 'auto'
 }
 
-onMounted(() => {
-  episodes.value = [
-    {
-      id: 1,
-      category: 'ZOOM FAILS',
-      title: 'Monkey Business',
-      image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=800&q=80',
-      shortDescription: 'Tragedi Willy TI di kebon dikejar monyet pas absen Zoom',
-      fullDescription: 'Ini adalah momen legendaris di mana Willy lagi di kebun pas Zoom class, tiba-tiba dikejar monyet sambil teriak-teriak. Semua mahasiswa dan dosen langsung ngakak ngeliat kejadian ini. Video-nya bahkan sempat viral di group WhatsApp angkatan dan jadi meme internal.',
-      date: 'Oktober 2023',
-      participants: 'Willy & The Monkey'
-    },
-    {
-      id: 2,
-      category: 'ZOOM FAILS',
-      title: 'Leaked Jidat',
-      image: 'https://images.unsplash.com/photo-1520182205149-1e5e4e7329b4?auto=format&fit=crop&w=800&q=80',
-      shortDescription: 'Insiden Dhila yang legend',
-      fullDescription: 'Momen ketika Dhila lupa nyalain kamera dengan posisi yang... unik. Jidat cemerlang memenuhi layar Zoom, bikin semua orang nahan ketawa. Sejak saat itu, Dhila jadi icon angkatan dengan julukan "Si Jidat Terang".',
-      date: 'November 2023',
-      participants: 'Dhila'
-    },
-    {
-      id: 3,
-      category: 'ZOOM FAILS',
-      title: 'The Naked Truth',
-      image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80',
-      shortDescription: 'Insiden Nico habis mandi pas Zoom',
-      fullDescription: 'Nico lupa matiin kamera pas habis mandi. Untungnya cuma keliatan bahu ke atas, tapi cukup bikin heboh satu kelas. Dosen sampai harus pause kuliah sebentar karena semua chat box penuh emoji surprised.',
-      date: 'Desember 2023',
-      participants: 'Nico'
-    },
-    {
-      id: 4,
-      category: 'ZOOM MYSTERY',
-      title: 'Symphony of Zoom',
-      image: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=800&q=80',
-      shortDescription: 'Misteri siapa yang ngorok pas kelas online',
-      fullDescription: 'Ada suara ngorok misterius yang sering muncul di tengah kuliah Zoom. Sampai sekarang belum ketahuan siapa pelakunya. Dosen pernah bilang "Tolong yang tidur matiin mic-nya", tapi suara ngorok tetap terdengar. Plot twist: mungkin dosennya sendiri?',
-      date: 'Januari 2024',
-      participants: 'Unknown Legend'
-    },
-    {
-      id: 5,
-      category: 'DRAMA',
-      title: 'Surat Terbuka Moment',
-      image: 'https://images.unsplash.com/photo-1577563908411-5077b6dc7624?auto=format&fit=crop&w=800&q=80',
-      shortDescription: 'Arsip momen-momen spicy surat terbuka',
-      fullDescription: 'Koleksi surat terbuka legendaris angkatan. Dari yang bikin baper, bikin heboh, sampai yang bikin tercengang. Ini adalah dokumentasi drama terbaik sepanjang masa TI 23. (Detail dirahasiakan untuk keamanan bersama)',
-      date: 'Various Dates',
-      participants: 'Multiple Players'
-    }
-  ]
+onMounted(async () => {
+  try {
+    const data = await $fetch(`${config.public.apiBase}/episodes`)
+    episodes.value = data.map(episode => ({
+      ...episode,
+      image: mediaUrl(episode.image),
+      shortDescription: episode.short_description,
+      fullDescription: episode.full_description,
+    }))
+  } catch (error) {
+    console.error('Gagal memuat episode dari database', error)
+  }
 })
 
 onUnmounted(() => {

@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\EpisodeController;
 use App\Http\Controllers\Api\TimelineController;
 use App\Http\Controllers\Api\SemesterController;
+use App\Http\Controllers\Api\UserController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -19,6 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::apiResource('users', UserController::class);
     
     Route::apiResource('students', StudentController::class)->except(['index']);
     Route::apiResource('episodes', EpisodeController::class)->except(['index']);

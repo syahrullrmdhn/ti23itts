@@ -76,5 +76,6 @@ const navigation = [
   { to: '/admin/students', label: 'Mahasiswa', icon: '👥' },
   { to: '/admin/episodes', label: 'Episodes', icon: '🎬' },
   { to: '/admin/timeline', label: 'Timeline', icon: '🗓️' },
+  { to: '/admin/users', label: 'Users', icon: '🔐' },
 ]
 </script>

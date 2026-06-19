@@ -88,6 +88,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 
+const config = useRuntimeConfig()
+const { mediaUrl } = useApiMedia()
 const students = ref([])
 const searchQuery = ref('')
 
@@ -109,81 +111,17 @@ const getStatusColor = (status) => {
   return statusColors[status] || 'bg-gray-500 text-white'
 }
 
-onMounted(() => {
-  students.value = [
-    {
-      id: 1,
-      name: 'Willy Kusuma',
-      role: 'Korban Monyet',
-      status: 'Aktif',
-      photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
-      aib_photo: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop',
-      fun_fact: 'Pernah dikejar monyet pas zoom'
-    },
-    {
-      id: 2,
-      name: 'Dhila Permata',
-      role: 'Si Jidat Terang',
-      status: 'Aktif',
-      photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
-      aib_photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
-      fun_fact: 'Jidat legendaris'
-    },
-    {
-      id: 3,
-      name: 'Nico Pratama',
-      role: 'Mr. Fresh',
-      status: 'Aktif',
-      photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
-      aib_photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop',
-      fun_fact: 'Lupa matiin kamera habis mandi'
-    },
-    {
-      id: 4,
-      name: 'Andi Wijaya',
-      role: 'Si Paling Rajin',
-      status: 'Aktif',
-      photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
-      aib_photo: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=400&h=400&fit=crop',
-      fun_fact: 'Selalu ngumpulin duluan'
-    },
-    {
-      id: 5,
-      name: 'Siti Rahmawati',
-      role: 'Tukang Tidur',
-      status: 'Aktif',
-      photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop',
-      aib_photo: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop',
-      fun_fact: 'Tidur di semua kelas'
-    },
-    {
-      id: 6,
-      name: 'Budi Santoso',
-      role: 'The Debugger',
-      status: 'Aktif',
-      photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop',
-      aib_photo: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=400&h=400&fit=crop',
-      fun_fact: 'Bisa fix bug apapun'
-    },
-    {
-      id: 7,
-      name: 'Maya Anggraini',
-      role: 'Queen of UI',
-      status: 'Cuti',
-      photo: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=400&fit=crop',
-      aib_photo: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop',
-      fun_fact: 'Desain selalu on point'
-    },
-    {
-      id: 8,
-      name: 'Reza Firmansyah',
-      role: 'Tukang Copas',
-      status: 'Aktif',
-      photo: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&h=400&fit=crop',
-      aib_photo: 'https://images.unsplash.com/photo-1489980557514-251d61e3eeb6?w=400&h=400&fit=crop',
-      fun_fact: 'Stack Overflow adalah teman'
-    }
-  ]
+onMounted(async () => {
+  try {
+    const data = await $fetch(`${config.public.apiBase}/students`)
+    students.value = data.map(student => ({
+      ...student,
+      photo: mediaUrl(student.photo),
+      aib_photo: mediaUrl(student.aib_photo || student.photo),
+    }))
+  } catch (error) {
+    console.error('Gagal memuat mahasiswa dari database', error)
+  }
 })
 </script>
 

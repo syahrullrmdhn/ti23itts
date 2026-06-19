@@ -1,12 +1,12 @@
 <template>
   <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900 text-white group">
     
-    <!-- Background Image Grid (Dummy dari Unsplash) -->
+    <!-- Background Image Grid dari foto mahasiswa di database -->
     <!-- Efek group-hover: opacity menurun agar teks makin jelas saat kursor masuk -->
     <div class="absolute inset-0 z-0 grid grid-cols-2 md:grid-cols-4 gap-1 opacity-50 transition-opacity duration-700 group-hover:opacity-20">
-      <div v-for="i in 16" :key="i" class="aspect-video bg-gray-800 overflow-hidden">
+      <div v-for="(photo, index) in heroPhotos" :key="`${photo}-${index}`" class="aspect-video bg-gray-800 overflow-hidden">
         <img 
-          :src="`https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80&random=${i}`" 
+          :src="photo"
           alt="Memories" 
           class="w-full h-full object-cover opacity-40 grayscale hover:grayscale-0 transition-all duration-500 scale-105 hover:scale-100" 
         />
@@ -48,7 +48,7 @@
       
       <!-- Description Panel -->
       <p class="text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto font-medium bg-gray-900/60 p-6 rounded-none border-l-4 border-green-500 backdrop-blur-sm shadow-2xl transition-all duration-500 group-hover:bg-gray-900/80">
-        Digital Yearbook Angkatan TI 2023 ITTS - Tempat nongkrong digital yang nyimpen semua memori, dari yang keren sampai aib legendaris!
+        Digital Yearbook Angkatan TI 2023 Institut Teknologi Tangerang Selatan - Tempat nongkrong digital yang nyimpen semua memori, dari yang keren sampai aib legendaris!
       </p>
       
       <!-- Call to Action Buttons (Neo-Brutalism Style) -->
@@ -73,7 +73,31 @@
 </template>
 
 <script setup>
-// Script setup dikosongkan sesuai template awal, bisa ditambahkan logika jika diperlukan nanti
+import { computed, onMounted, ref } from 'vue'
+
+const config = useRuntimeConfig()
+const { mediaUrl } = useApiMedia()
+const studentPhotos = ref([])
+
+const heroPhotos = computed(() => {
+  const photos = studentPhotos.value.length
+    ? studentPhotos.value
+    : [mediaUrl(null)]
+
+  return Array.from({ length: 16 }, (_, index) => photos[index % photos.length])
+})
+
+onMounted(async () => {
+  try {
+    const students = await $fetch(`${config.public.apiBase}/students`)
+    studentPhotos.value = students
+      .flatMap(student => [student.photo, student.aib_photo])
+      .filter(Boolean)
+      .map(mediaUrl)
+  } catch (error) {
+    console.error('Gagal memuat foto hero dari database', error)
+  }
+})
 </script>
 
 <style scoped>

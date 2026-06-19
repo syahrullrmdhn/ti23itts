@@ -5,11 +5,11 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   app: {
     head: {
-      title: 'TI\'23 Insiders - Digital Yearbook',
+      title: 'TI\'23 Institut Teknologi Tangerang Selatan - Digital Yearbook',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Digital Yearbook Angkatan TI 2023 ITTS - How fun we are!' }
+        { name: 'description', content: 'Digital Yearbook Angkatan TI 2023 Institut Teknologi Tangerang Selatan - How fun we are!' }
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
