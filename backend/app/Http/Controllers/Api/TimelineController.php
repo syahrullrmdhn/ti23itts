@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Timeline;
 use App\Models\Semester;
+use App\Support\AuditLogger;
 use Illuminate\Http\Request;
 
 class TimelineController extends Controller
@@ -32,8 +33,26 @@ class TimelineController extends Controller
 
         if ($timeline) {
             $timeline->update($validated);
+            AuditLogger::record(
+                $request->user(),
+                'timeline.updated',
+                'timeline',
+                $timeline->id,
+                'Timeline utama',
+                'Memperbarui ringkasan timeline angkatan.',
+                $validated
+            );
         } else {
             $timeline = Timeline::create($validated);
+            AuditLogger::record(
+                $request->user(),
+                'timeline.created',
+                'timeline',
+                $timeline->id,
+                'Timeline utama',
+                'Membuat ringkasan timeline angkatan.',
+                $validated
+            );
         }
 
         return response()->json($timeline, 201);
@@ -49,6 +68,15 @@ class TimelineController extends Controller
         ]);
 
         $timeline->update($validated);
+        AuditLogger::record(
+            $request->user(),
+            'timeline.updated',
+            'timeline',
+            $timeline->id,
+            'Timeline utama',
+            'Memperbarui data timeline angkatan.',
+            $validated
+        );
 
         return response()->json($timeline);
     }

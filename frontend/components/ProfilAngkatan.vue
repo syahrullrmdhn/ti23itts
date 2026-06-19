@@ -27,6 +27,38 @@
         >
       </div>
 
+      <div v-reveal="'up'" class="mx-auto mb-12 max-w-6xl">
+        <div class="border-4 border-white bg-gray-800 p-5 shadow-[6px_6px_0px_0px_rgba(34,197,94,1)]">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p class="text-xs font-black uppercase tracking-[0.2em] text-gray-400">Filter Badge Lucu</p>
+              <p class="mt-2 font-bold text-gray-300">Lihat siapa yang paling sering dipilih untuk badge tertentu.</p>
+            </div>
+            <button
+              v-if="selectedBadge"
+              type="button"
+              class="border-2 border-white bg-white px-4 py-2 text-xs font-black uppercase text-gray-900 shadow-[3px_3px_0px_0px_rgba(34,197,94,1)] transition-all hover:-translate-y-1"
+              @click="selectedBadge = ''"
+            >
+              Reset Filter
+            </button>
+          </div>
+
+          <div class="mt-4 flex flex-wrap gap-3">
+            <button
+              v-for="badge in badgeOptions"
+              :key="badge.key"
+              type="button"
+              class="border-2 px-4 py-3 text-left text-xs font-black uppercase tracking-[0.15em] transition-all hover:-translate-y-1"
+              :class="selectedBadge === badge.key ? 'border-gray-900 bg-green-500 text-gray-900 shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]' : 'border-white bg-gray-900 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'"
+              @click="selectedBadge = selectedBadge === badge.key ? '' : badge.key"
+            >
+              {{ badge.label }}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Students Grid -->
       <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <NuxtLink
@@ -76,6 +108,16 @@
               
               <div class="inline-block bg-gray-900 text-green-400 px-3 py-1 text-sm font-black mb-4 uppercase tracking-wider border border-green-500 transform -rotate-1">
                 {{ student.role }}
+              </div>
+
+              <div v-if="student.highlighted_badges?.length" class="mb-4 flex flex-wrap gap-2">
+                <span
+                  v-for="badge in student.highlighted_badges"
+                  :key="badge.key"
+                  class="inline-block border border-white bg-green-500 px-2 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-gray-900"
+                >
+                  {{ badge.label }} · {{ badge.count }}
+                </span>
               </div>
               
               <div v-if="student.fun_fact" class="bg-white text-gray-900 p-3 text-sm font-bold border-2 border-gray-900 shadow-[3px_3px_0px_0px_rgba(34,197,94,1)] transform rotate-1 mt-2">
@@ -138,16 +180,25 @@ const config = useRuntimeConfig()
 const { mediaUrl } = useApiMedia()
 const students = ref([])
 const searchQuery = ref('')
+const selectedBadge = ref('')
 const currentPage = ref(1)
 const perPage = 8
 
+const badgeOptions = [
+  { key: 'paling_dicari', label: 'Paling Dicari' },
+  { key: 'si_paling_kocak', label: 'Si Paling Kocak' },
+  { key: 'anak_sibuk', label: 'Anak Sibuk' },
+  { key: 'most_wholesome', label: 'Most Wholesome' },
+]
+
 const filteredStudents = computed(() => {
-  if (!searchQuery.value) return students.value
   const query = searchQuery.value.toLowerCase()
-  return students.value.filter(student => 
-    student.name.toLowerCase().includes(query) ||
-    student.role.toLowerCase().includes(query)
-  )
+
+  return students.value.filter(student => {
+    const matchesSearch = !query || student.name.toLowerCase().includes(query) || student.role.toLowerCase().includes(query)
+    const matchesBadge = !selectedBadge.value || (student.highlighted_badges || []).some(badge => badge.key === selectedBadge.value)
+    return matchesSearch && matchesBadge
+  })
 })
 
 const totalPages = computed(() => Math.max(1, Math.ceil(filteredStudents.value.length / perPage)))
@@ -169,7 +220,7 @@ const paginationWindow = computed(() => {
   return pages
 })
 
-watch(searchQuery, () => {
+watch([searchQuery, selectedBadge], () => {
   currentPage.value = 1
 })
 

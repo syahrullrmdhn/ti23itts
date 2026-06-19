@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
+    public const BADGE_DEFINITIONS = [
+        'paling_dicari' => 'Paling Dicari',
+        'si_paling_kocak' => 'Si Paling Kocak',
+        'anak_sibuk' => 'Anak Sibuk',
+        'most_wholesome' => 'Most Wholesome',
+    ];
+
     protected $fillable = [
         'nim',
         'name',
@@ -28,4 +35,14 @@ class Student extends Model
     protected $casts = [
         'birth_date' => 'date:Y-m-d',
     ];
+
+    public function wallMessages()
+    {
+        return $this->hasMany(StudentWallMessage::class)->latest();
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(StudentVote::class);
+    }
 }

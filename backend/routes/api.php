@@ -10,11 +10,16 @@ use App\Http\Controllers\Api\TimelineController;
 use App\Http\Controllers\Api\SemesterController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\HeroPhotoController;
+use App\Http\Controllers\Api\AuditLogController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/students', [StudentController::class, 'index']);
 Route::get('/students/{id}/public', [StudentController::class, 'publicShow']);
+Route::post('/students/{id}/messages', [StudentController::class, 'storeWallMessage']);
+Route::put('/students/{studentId}/messages/{messageId}', [StudentController::class, 'updateWallMessage']);
+Route::delete('/students/{studentId}/messages/{messageId}', [StudentController::class, 'destroyWallMessage']);
+Route::post('/students/{id}/vote', [StudentController::class, 'vote']);
 Route::get('/episodes', [EpisodeController::class, 'index']);
 Route::post('/episodes/{id}/like', [EpisodeController::class, 'like']);
 Route::post('/episodes/{id}/comment', [EpisodeController::class, 'comment']);
@@ -28,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::apiResource('users', UserController::class);
+    Route::get('/audit-logs', [AuditLogController::class, 'index']);
     Route::get('/admin/students', [StudentController::class, 'adminIndex']);
 
     Route::apiResource('students', StudentController::class)->except(['index']);

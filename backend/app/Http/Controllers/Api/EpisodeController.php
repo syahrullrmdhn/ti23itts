@@ -7,6 +7,7 @@ use App\Models\Episode;
 use App\Models\EpisodeComment;
 use App\Models\EpisodeLike;
 use App\Models\Student;
+use App\Support\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -169,6 +170,15 @@ class EpisodeController extends Controller
         $validated = $this->normalizePayload($request);
 
         $episode = Episode::create($validated);
+        AuditLogger::record(
+            $request->user(),
+            'episode.created',
+            'episode',
+            $episode->id,
+            $episode->title,
+            "Menambahkan episode {$episode->title}.",
+            ['category' => $episode->category]
+        );
 
         return response()->json($episode, 201);
     }
@@ -186,6 +196,15 @@ class EpisodeController extends Controller
         $validated = $this->normalizePayload($request, $episode, true);
 
         $episode->update($validated);
+        AuditLogger::record(
+            $request->user(),
+            'episode.updated',
+            'episode',
+            $episode->id,
+            $episode->title,
+            "Memperbarui episode {$episode->title}.",
+            ['category' => $episode->category]
+        );
 
         return response()->json($episode);
     }
@@ -198,6 +217,16 @@ class EpisodeController extends Controller
             $this->deleteStoredMedia($episode->image);
             $this->deleteStoredMedia($episode->video_url);
         }
+
+        AuditLogger::record(
+            $request->user(),
+            'episode.deleted',
+            'episode',
+            $episode->id,
+            $episode->title,
+            "Menghapus episode {$episode->title}.",
+            ['category' => $episode->category]
+        );
 
         $episode->delete();
 

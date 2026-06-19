@@ -64,6 +64,9 @@
               <rect x="3" y="5" width="18" height="16" rx="2" />
               <path stroke-linecap="round" stroke-linejoin="round" d="M8 15h3M13 15h3M8 18h8" />
             </svg>
+            <svg v-else-if="item.icon === 'audit'" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 11.25 11 13l4-4m5 3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
             <svg v-else viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
               <circle cx="8.5" cy="7" r="4" />
@@ -128,5 +131,6 @@ const navigation = [
   { to: '/admin/episodes', label: 'Episodes', icon: 'episodes' },
   { to: '/admin/timeline', label: 'Timeline', icon: 'timeline' },
   { to: '/admin/users', label: 'Users', icon: 'users' },
+  { to: '/admin/audit-logs', label: 'Audit Log', icon: 'audit' },
 ]
 </script>

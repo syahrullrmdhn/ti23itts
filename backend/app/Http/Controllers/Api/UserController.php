@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -27,6 +28,15 @@ class UserController extends Controller
         ]);
 
         $user = User::create($validated);
+        AuditLogger::record(
+            $request->user(),
+            'user.created',
+            'user',
+            $user->id,
+            $user->name,
+            "Menambahkan user admin {$user->name}.",
+            ['email' => $user->email]
+        );
 
         return response()->json($user, 201);
     }
@@ -55,6 +65,15 @@ class UserController extends Controller
         }
 
         $user->update($validated);
+        AuditLogger::record(
+            $request->user(),
+            'user.updated',
+            'user',
+            $user->id,
+            $user->name,
+            "Memperbarui user admin {$user->name}.",
+            ['email' => $user->email]
+        );
 
         return response()->json($user);
     }
@@ -66,6 +85,16 @@ class UserController extends Controller
                 'message' => 'Akun yang sedang digunakan tidak dapat dihapus.',
             ], 422);
         }
+
+        AuditLogger::record(
+            $request->user(),
+            'user.deleted',
+            'user',
+            $user->id,
+            $user->name,
+            "Menghapus user admin {$user->name}.",
+            ['email' => $user->email]
+        );
 
         $user->tokens()->delete();
         $user->delete();

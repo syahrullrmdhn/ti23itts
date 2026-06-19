@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Semester;
+use App\Support\AuditLogger;
 use Illuminate\Http\Request;
 
 class SemesterController extends Controller
@@ -50,6 +51,15 @@ class SemesterController extends Controller
         );
 
         $semester = Semester::create($validated);
+        AuditLogger::record(
+            $request->user(),
+            'semester.created',
+            'semester',
+            $semester->id,
+            'Semester ' . $semester->semester,
+            'Menambahkan data semester ' . $semester->semester . '.',
+            ['period' => $semester->period, 'student_count' => $semester->student_count]
+        );
 
         return response()->json($semester, 201);
     }
@@ -69,6 +79,15 @@ class SemesterController extends Controller
         );
 
         $semester->update($validated);
+        AuditLogger::record(
+            $request->user(),
+            'semester.updated',
+            'semester',
+            $semester->id,
+            'Semester ' . $semester->semester,
+            'Memperbarui data semester ' . $semester->semester . '.',
+            ['period' => $semester->period, 'student_count' => $semester->student_count]
+        );
 
         return response()->json($semester);
     }
@@ -76,6 +95,15 @@ class SemesterController extends Controller
     public function destroy(string $id)
     {
         $semester = Semester::findOrFail($id);
+        AuditLogger::record(
+            request()->user(),
+            'semester.deleted',
+            'semester',
+            $semester->id,
+            'Semester ' . $semester->semester,
+            'Menghapus data semester ' . $semester->semester . '.',
+            ['period' => $semester->period]
+        );
         $semester->delete();
 
         return response()->json(null, 204);
