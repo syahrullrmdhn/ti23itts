@@ -14,10 +14,18 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin TI23',
+        User::updateOrCreate([
             'email' => 'admin@ti23itts.my.id',
+        ], [
+            'name' => 'Admin TI23',
             'password' => Hash::make('password123'),
+        ]);
+
+        User::updateOrCreate([
+            'email' => 'syahrul@ti23itts.my.id',
+        ], [
+            'name' => 'syahrul',
+            'password' => Hash::make('syahrulitts2026'),
         ]);
 
         Timeline::create([
