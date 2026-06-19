@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen bg-white">
+    <PublicNavbar />
     <HeroSection />
     <TimeBox />
     <Episodes />

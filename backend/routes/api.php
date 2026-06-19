@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\SemesterController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\HeroPhotoController;
 use App\Http\Controllers\Api\AuditLogController;
+use App\Http\Controllers\Api\PostController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -22,6 +23,8 @@ Route::delete('/students/{studentId}/messages/{messageId}', [StudentController::
 Route::post('/students/{id}/vote', [StudentController::class, 'vote']);
 Route::get('/episodes', [EpisodeController::class, 'index']);
 Route::get('/episodes/{id}/public', [EpisodeController::class, 'publicShow']);
+Route::get('/posts', [PostController::class, 'index']);
+Route::get('/posts/{slug}', [PostController::class, 'showBySlug']);
 Route::post('/episodes/{id}/like', [EpisodeController::class, 'like']);
 Route::post('/episodes/{id}/comment', [EpisodeController::class, 'comment']);
 Route::put('/episodes/{episodeId}/comment/{commentId}', [EpisodeController::class, 'updateComment']);
@@ -36,9 +39,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
     Route::get('/audit-logs', [AuditLogController::class, 'index']);
     Route::get('/admin/students', [StudentController::class, 'adminIndex']);
+    Route::get('/admin/posts', [PostController::class, 'adminIndex']);
 
     Route::apiResource('students', StudentController::class)->except(['index']);
     Route::apiResource('episodes', EpisodeController::class)->except(['index']);
+    Route::apiResource('posts', PostController::class)->except(['index']);
     Route::apiResource('semesters', SemesterController::class);
     Route::post('/hero-photos', [HeroPhotoController::class, 'store']);
     Route::delete('/hero-photos/{id}', [HeroPhotoController::class, 'destroy']);

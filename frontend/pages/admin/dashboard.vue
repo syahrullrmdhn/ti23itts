@@ -41,7 +41,7 @@
     <!-- ==========================================
          2. STATS GRID
     =========================================== -->
-    <section class="grid grid-cols-1 gap-6 sm:grid-cols-2 2xl:grid-cols-4">
+    <section class="grid grid-cols-1 gap-6 sm:grid-cols-2 2xl:grid-cols-5">
       <article
         v-for="item in stats"
         :key="item.label"
@@ -186,6 +186,7 @@ const { mediaUrl } = useApiMedia()
 const stats = ref([
   { label: 'Total Mahasiswa', value: 42, icon: '👥', tag: 'Active' },
   { label: 'Total Episodes', value: 8, icon: '📺', tag: 'Episodes' },
+  { label: 'Total Cerita', value: 0, icon: '📝', tag: 'Stories' },
   { label: 'Total Semester', value: 6, icon: '📅', tag: 'Timeline' },
   { label: 'Total Dosen', value: 15, icon: '👨‍🏫', tag: 'Lecturers' },
 ])
@@ -193,6 +194,7 @@ const stats = ref([
 const actions = [
   { to: '/admin/students', title: 'Kelola Mahasiswa', description: 'Masukin data anak-anak baru atau update profil mereka.', icon: '🧑‍🎓' },
   { to: '/admin/episodes', title: 'Kelola Episode', description: 'Atur aib, drama, dan inside jokes angkatan di sini.', icon: '🎬' },
+  { to: '/admin/posts', title: 'Kelola Cerita', description: 'Tulis blog, cerita nostalgia, atau catatan seru angkatan.', icon: '📝' },
   { to: '/admin/timeline', title: 'Update Timeline', description: 'Catet cerita semester dan statistik perjalanan bareng.', icon: '🗓️' },
   { to: '/', title: 'Lihat Website', description: 'Cek langsung hasil kerjaan kamu di web publik.', icon: '👀' },
 ]
@@ -230,6 +232,7 @@ type DashboardResponse = {
   stats: {
     students: number
     episodes: number
+    posts: number
     semesters: number
     lecturers: number
   }
@@ -329,8 +332,9 @@ onMounted(async () => {
     stats.value = [
       { ...stats.value[0], value: data.stats.students },
       { ...stats.value[1], value: data.stats.episodes },
-      { ...stats.value[2], value: data.stats.semesters },
-      { ...stats.value[3], value: data.stats.lecturers },
+      { ...stats.value[2], value: data.stats.posts },
+      { ...stats.value[3], value: data.stats.semesters },
+      { ...stats.value[4], value: data.stats.lecturers },
     ]
 
     recentActivities.value = data.recentActivities

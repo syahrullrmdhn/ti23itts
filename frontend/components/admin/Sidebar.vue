@@ -64,6 +64,10 @@
               <rect x="3" y="5" width="18" height="16" rx="2" />
               <path stroke-linecap="round" stroke-linejoin="round" d="M8 15h3M13 15h3M8 18h8" />
             </svg>
+            <svg v-else-if="item.icon === 'posts'" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 4h14v16H5z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 8h8M8 12h8M8 16h5" />
+            </svg>
             <svg v-else-if="item.icon === 'audit'" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 11.25 11 13l4-4m5 3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
@@ -129,6 +133,7 @@ const navigation = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: 'dashboard' },
   { to: '/admin/students', label: 'Mahasiswa', icon: 'students' },
   { to: '/admin/episodes', label: 'Episodes', icon: 'episodes' },
+  { to: '/admin/posts', label: 'Cerita', icon: 'posts' },
   { to: '/admin/timeline', label: 'Timeline', icon: 'timeline' },
   { to: '/admin/users', label: 'Users', icon: 'users' },
   { to: '/admin/audit-logs', label: 'Audit Log', icon: 'audit' },

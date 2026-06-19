@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Episode;
+use App\Models\Post;
 use App\Models\Semester;
 use App\Models\Student;
 use App\Models\Timeline;
@@ -18,6 +19,7 @@ class DashboardController extends Controller
             'stats' => [
                 'students' => Student::count(),
                 'episodes' => Episode::count(),
+                'posts' => Post::count(),
                 'semesters' => Semester::count(),
                 'lecturers' => $this->countLecturers(),
             ],
@@ -49,6 +51,7 @@ class DashboardController extends Controller
         return collect()
             ->concat($this->studentActivities())
             ->concat($this->episodeActivities())
+            ->concat($this->postActivities())
             ->concat($this->semesterActivities())
             ->concat($this->timelineActivities())
             ->sortByDesc('sort_at')
@@ -122,6 +125,27 @@ class DashboardController extends Controller
                         : "Semester {$semester->semester} berhasil ditambahkan ke timeline.",
                     'time' => $this->humanizeTime($semester->updated_at),
                     'sort_at' => $semester->updated_at,
+                ];
+            });
+    }
+
+    private function postActivities(): Collection
+    {
+        return Post::query()
+            ->latest('updated_at')
+            ->take(3)
+            ->get()
+            ->map(function (Post $post) {
+                $wasUpdated = $post->updated_at?->gt($post->created_at);
+
+                return [
+                    'icon' => '📝',
+                    'title' => $wasUpdated ? 'Cerita diperbarui' : 'Cerita baru diterbitkan',
+                    'description' => $wasUpdated
+                        ? "Cerita \"{$post->title}\" berhasil diperbarui."
+                        : "Cerita \"{$post->title}\" berhasil ditambahkan.",
+                    'time' => $this->humanizeTime($post->updated_at),
+                    'sort_at' => $post->updated_at,
                 ];
             });
     }
