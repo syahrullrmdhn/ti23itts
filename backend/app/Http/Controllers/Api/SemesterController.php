@@ -8,6 +8,35 @@ use Illuminate\Http\Request;
 
 class SemesterController extends Controller
 {
+    protected function rules(bool $partial = false): array
+    {
+        $prefix = $partial ? 'sometimes|' : '';
+
+        return [
+            'semester' => $prefix . 'required|integer|min:1',
+            'period' => $prefix . 'required|string|max:255',
+            'icon' => $prefix . 'required|string|max:50',
+            'student_count' => $prefix . 'required|integer|min:0',
+            'lecturers' => $prefix . 'nullable|array',
+            'lecturers.*.name' => 'required_with:lecturers|string|max:255',
+            'lecturers.*.isAnomaly' => 'nullable|boolean',
+        ];
+    }
+
+    protected function normalizePayload(array $validated): array
+    {
+        $validated['lecturers'] = collect($validated['lecturers'] ?? [])
+            ->filter(fn ($lecturer) => filled($lecturer['name'] ?? null))
+            ->map(fn ($lecturer) => [
+                'name' => trim((string) $lecturer['name']),
+                'isAnomaly' => (bool) ($lecturer['isAnomaly'] ?? false),
+            ])
+            ->values()
+            ->all();
+
+        return $validated;
+    }
+
     public function index()
     {
         $semesters = Semester::orderBy('semester')->get();
@@ -16,13 +45,9 @@ class SemesterController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'semester' => 'required|integer',
-            'period' => 'required|string',
-            'icon' => 'required|string|max:10',
-            'student_count' => 'required|integer',
-            'lecturers' => 'required|array'
-        ]);
+        $validated = $this->normalizePayload(
+            $request->validate($this->rules())
+        );
 
         $semester = Semester::create($validated);
 
@@ -39,13 +64,9 @@ class SemesterController extends Controller
     {
         $semester = Semester::findOrFail($id);
 
-        $validated = $request->validate([
-            'semester' => 'sometimes|required|integer',
-            'period' => 'sometimes|required|string',
-            'icon' => 'sometimes|required|string|max:10',
-            'student_count' => 'sometimes|required|integer',
-            'lecturers' => 'sometimes|required|array'
-        ]);
+        $validated = $this->normalizePayload(
+            $request->validate($this->rules(partial: true))
+        );
 
         $semester->update($validated);
 

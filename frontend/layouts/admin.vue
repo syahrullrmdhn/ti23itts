@@ -30,7 +30,7 @@
       </header>
 
       <!-- Tempat konten halaman di-render (seperti dashboard, students, dll) -->
-      <main class="flex-1 p-4 sm:p-8 overflow-x-hidden">
+      <main class="flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-8">
         <slot />
       </main>
       

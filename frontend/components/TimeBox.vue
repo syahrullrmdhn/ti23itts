@@ -5,8 +5,8 @@
 
     <div class="container mx-auto px-4 relative z-10">
       <!-- Section Header -->
-      <div class="text-center mb-20 flex flex-col items-center">
-        <h2 class="font-display text-5xl md:text-7xl font-black mb-6 flex flex-col items-center gap-3">
+      <div v-reveal="'up'" class="mb-20 flex flex-col items-center text-center">
+        <h2 class="mb-6 flex flex-col items-center gap-3 font-display text-5xl font-black md:text-7xl">
           <span class="inline-block bg-white text-gray-900 px-6 py-1 transform -rotate-2 shadow-[6px_6px_0px_0px_rgba(34,197,94,1)] hover:-translate-y-1 hover:rotate-0 transition-all duration-300">
             THE TIME
           </span>
@@ -20,18 +20,18 @@
       </div>
 
       <!-- Statistics Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 max-w-5xl mx-auto">
-        <div class="bg-gray-800 border-2 border-white p-8 text-center transform -rotate-1 hover:rotate-0 hover:-translate-y-2 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(34,197,94,1)]">
+      <div class="mx-auto mb-20 grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-3">
+        <div v-reveal="'left'" class="bg-gray-800 border-2 border-white p-8 text-center transform -rotate-1 shadow-[8px_8px_0px_0px_rgba(34,197,94,1)] transition-all duration-300 hover:-translate-y-2 hover:rotate-0">
           <div class="text-6xl font-black mb-2 text-white drop-shadow-[4px_4px_0px_rgba(34,197,94,0.5)]">{{ stats.initialCount }}</div>
           <div class="font-black text-green-400 uppercase tracking-widest text-sm bg-gray-900 py-1 inline-block px-4 border border-green-500">Mahasiswa Awal</div>
         </div>
         
-        <div class="bg-green-500 border-2 border-gray-900 p-8 text-center transform rotate-1 hover:rotate-0 hover:-translate-y-2 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
+        <div v-reveal="'up'" class="bg-green-500 border-2 border-gray-900 p-8 text-center transform rotate-1 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] transition-all duration-300 hover:-translate-y-2 hover:rotate-0">
           <div class="text-6xl font-black mb-2 text-gray-900 drop-shadow-[4px_4px_0px_rgba(255,255,255,0.5)]">{{ stats.currentCount }}</div>
           <div class="font-black text-white uppercase tracking-widest text-sm bg-gray-900 py-1 inline-block px-4 border border-gray-900">Masih Survive</div>
         </div>
         
-        <div class="bg-gray-800 border-2 border-white p-8 text-center transform -rotate-1 hover:rotate-0 hover:-translate-y-2 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(34,197,94,1)]">
+        <div v-reveal="'right'" class="bg-gray-800 border-2 border-white p-8 text-center transform -rotate-1 shadow-[8px_8px_0px_0px_rgba(34,197,94,1)] transition-all duration-300 hover:-translate-y-2 hover:rotate-0">
           <div class="text-6xl font-black mb-2 text-white drop-shadow-[4px_4px_0px_rgba(34,197,94,0.5)]">{{ stats.totalSemesters }}</div>
           <div class="font-black text-green-400 uppercase tracking-widest text-sm bg-gray-900 py-1 inline-block px-4 border border-green-500">Semester Dilalui</div>
         </div>
@@ -40,9 +40,10 @@
       <!-- Timeline -->
       <div class="max-w-4xl mx-auto">
         <div class="space-y-12">
-          <div 
+          <div
             v-for="semester in timeline" 
             :key="semester.id"
+            v-reveal="'up'"
             class="flex flex-col md:flex-row gap-6 items-start group"
           >
             <div class="flex-shrink-0 relative z-10">

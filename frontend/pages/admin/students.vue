@@ -1,345 +1,330 @@
 <template>
   <div class="space-y-8">
-        <!-- Page Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h2 class="text-4xl font-black text-gray-900 uppercase inline-block bg-green-500 px-6 py-2 transform -rotate-1 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-              Manajemen Mahasiswa
-            </h2>
-            <p class="text-gray-600 font-bold text-lg mt-4">Kelola data mahasiswa TI'23</p>
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h2 class="inline-block -rotate-1 bg-green-500 px-6 py-2 text-4xl font-black uppercase text-gray-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+          Data Mahasiswa
+        </h2>
+        <p class="mt-4 text-lg font-bold text-gray-600">Data pribadi hanya tersedia di dashboard admin.</p>
+      </div>
+      <button class="border-4 border-gray-900 bg-gray-900 px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(34,197,94,1)] hover:bg-green-500 hover:text-gray-900" @click="openAddModal">
+        + Tambah Mahasiswa
+      </button>
+    </div>
+
+    <div class="grid gap-4 border-4 border-gray-900 bg-white p-6 shadow-[6px_6px_0_rgba(34,197,94,1)] md:grid-cols-3">
+      <input v-model="searchQuery" type="search" placeholder="Cari nama, NIM, atau email..." class="border-2 border-gray-900 px-4 py-3 font-bold outline-none focus:border-green-500 md:col-span-2">
+      <select v-model="filterStatus" class="border-2 border-gray-900 bg-white px-4 py-3 font-bold">
+        <option value="">Semua status</option>
+        <option value="Aktif">Aktif</option>
+        <option value="Cuti">Cuti</option>
+        <option value="Alumni">Alumni</option>
+      </select>
+    </div>
+
+    <div class="overflow-hidden border-4 border-gray-900 bg-white shadow-[8px_8px_0_rgba(34,197,94,1)]">
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[1100px]">
+          <thead class="bg-gray-900 text-white">
+            <tr>
+              <th class="px-5 py-4 text-left font-black uppercase">Mahasiswa</th>
+              <th class="px-5 py-4 text-left font-black uppercase">Kontak</th>
+              <th class="px-5 py-4 text-left font-black uppercase">TTL</th>
+              <th class="px-5 py-4 text-left font-black uppercase">Kelas</th>
+              <th class="px-5 py-4 text-left font-black uppercase">Status</th>
+              <th class="px-5 py-4 text-center font-black uppercase">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="student in filteredStudents" :key="student.id" class="border-b-2 border-gray-200 align-top hover:bg-green-50">
+              <td class="px-5 py-4">
+                <div class="flex gap-3">
+                  <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden border-2 border-gray-900 bg-green-500 text-lg font-black">
+                    <img v-if="student.photo" :src="mediaUrl(student.photo)" :alt="student.name" class="h-full w-full object-cover">
+                    <svg v-else viewBox="0 0 24 24" aria-hidden="true" class="h-9 w-9 text-gray-900">
+                      <path
+                        fill="currentColor"
+                        d="M12 12c2.76 0 5-2.69 5-6s-2.24-6-5-6-5 2.69-5 6 2.24 6 5 6Zm0 2c-4.42 0-8 2.91-8 6.5 0 .83.67 1.5 1.5 1.5h13c.83 0 1.5-.67 1.5-1.5C20 16.91 16.42 14 12 14Z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-black text-gray-900">{{ student.name }}</p>
+                    <p class="text-sm font-bold text-gray-600">{{ student.nim }}</p>
+                    <p class="mt-1 text-xs font-bold text-gray-500">{{ student.gender || '—' }} · {{ student.religion || '—' }}</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4 text-sm font-bold text-gray-700">
+                <p>{{ student.email || '—' }}</p>
+                <p class="mt-1">{{ student.phone || '—' }}</p>
+              </td>
+              <td class="px-5 py-4 text-sm font-bold text-gray-700">
+                {{ student.birth_place || '—' }}<br>
+                {{ formatBirthDate(student.birth_date) }}
+              </td>
+              <td class="px-5 py-4 text-sm font-bold text-gray-700">
+                {{ student.class_type || '—' }}<br>
+                <span class="text-gray-500">{{ student.entry_type || 'Reguler' }}</span>
+              </td>
+              <td class="px-5 py-4">
+                <span class="inline-block border-2 border-gray-900 bg-green-500 px-3 py-1 text-xs font-black uppercase">{{ student.status }}</span>
+              </td>
+              <td class="px-5 py-4">
+                <div class="flex justify-center gap-2">
+                  <button class="border-2 border-gray-900 px-3 py-2 text-xs font-black uppercase hover:bg-green-500" @click="openEditModal(student)">Edit</button>
+                  <button class="border-2 border-gray-900 px-3 py-2 text-xs font-black uppercase hover:bg-red-500 hover:text-white" @click="deleteStudent(student)">Hapus</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-if="loading || filteredStudents.length === 0" class="p-10 text-center font-black uppercase text-gray-500">
+        {{ loading ? 'Memuat data...' : 'Mahasiswa tidak ditemukan.' }}
+      </div>
+    </div>
+
+    <Teleport to="body">
+      <div v-if="showModal" class="fixed inset-0 z-[9999] min-h-screen overflow-y-auto bg-gray-900/95 px-4 py-8 backdrop-blur-sm" @click="closeModal">
+        <div class="mx-auto w-full max-w-4xl border-4 border-gray-900 bg-white p-6 shadow-[16px_16px_0_rgba(34,197,94,1)] sm:p-8" @click.stop>
+          <div class="mb-6 flex items-center justify-between">
+            <h3 class="text-3xl font-black uppercase">{{ editMode ? 'Edit' : 'Tambah' }} Mahasiswa</h3>
+            <button class="h-11 w-11 shrink-0 bg-gray-900 font-black text-white hover:bg-red-500" @click="closeModal">X</button>
           </div>
-          <button 
-            @click="openAddModal"
-            class="px-6 py-3 bg-gray-900 text-white border-4 border-gray-900 hover:bg-green-500 hover:text-gray-900 font-black uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(34,197,94,1)] hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:-translate-y-1 transition-all duration-200 transform"
-          >
-            ➕ Tambah Mahasiswa
-          </button>
-        </div>
-
-        <!-- Search & Filter -->
-        <div class="bg-white border-4 border-gray-900 p-6 shadow-[6px_6px_0px_0px_rgba(34,197,94,1)]">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input 
-              v-model="searchQuery"
-              type="text" 
-              placeholder="Cari nama mahasiswa..."
-              class="px-4 py-3 border-2 border-gray-900 focus:border-green-500 focus:outline-none font-bold"
-            />
-            <select 
-              v-model="filterStatus"
-              class="px-4 py-3 border-2 border-gray-900 focus:border-green-500 focus:outline-none font-bold bg-white"
-            >
-              <option value="">Semua Status</option>
-              <option value="active">Aktif</option>
-              <option value="cuti">Cuti</option>
-              <option value="alumni">Alumni</option>
-            </select>
-            <button 
-              @click="resetFilters"
-              class="px-4 py-3 bg-gray-900 text-white border-2 border-gray-900 hover:bg-green-500 hover:text-gray-900 font-black uppercase tracking-wider transition-all duration-200"
-            >
-              Reset Filter
-            </button>
-          </div>
-        </div>
-
-        <!-- Students Table -->
-        <div class="bg-white border-4 border-gray-900 shadow-[8px_8px_0px_0px_rgba(34,197,94,1)] overflow-hidden">
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead class="bg-gray-900 text-white">
-                <tr>
-                  <th class="px-6 py-4 text-left font-black uppercase tracking-wider border-r-2 border-gray-700">Foto</th>
-                  <th class="px-6 py-4 text-left font-black uppercase tracking-wider border-r-2 border-gray-700">Nama</th>
-                  <th class="px-6 py-4 text-left font-black uppercase tracking-wider border-r-2 border-gray-700">NIM</th>
-                  <th class="px-6 py-4 text-left font-black uppercase tracking-wider border-r-2 border-gray-700">Role</th>
-                  <th class="px-6 py-4 text-left font-black uppercase tracking-wider border-r-2 border-gray-700">Status</th>
-                  <th class="px-6 py-4 text-center font-black uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr 
-                  v-for="(student, index) in filteredStudents" 
-                  :key="student.id"
-                  :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'"
-                  class="border-b-2 border-gray-200 hover:bg-green-50 transition-colors duration-200"
-                >
-                  <td class="px-6 py-4">
-                    <img :src="student.photo" :alt="student.name" class="w-16 h-16 object-cover border-2 border-gray-900" />
-                  </td>
-                  <td class="px-6 py-4 font-bold text-gray-900">{{ student.name }}</td>
-                  <td class="px-6 py-4 font-bold text-gray-700">{{ student.nim }}</td>
-                  <td class="px-6 py-4 font-bold text-gray-700">{{ student.role }}</td>
-                  <td class="px-6 py-4">
-                    <span 
-                      :class="{
-                        'bg-green-500 text-white': student.status === 'active',
-                        'bg-yellow-500 text-gray-900': student.status === 'cuti',
-                        'bg-gray-500 text-white': student.status === 'alumni'
-                      }"
-                      class="px-3 py-1 text-xs font-black uppercase border-2 border-gray-900 inline-block"
-                    >
-                      {{ student.status }}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4">
-                    <div class="flex justify-center gap-2">
-                      <button 
-                        @click="editStudent(student)"
-                        class="px-4 py-2 bg-white text-gray-900 border-2 border-gray-900 hover:bg-green-500 font-black uppercase text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all duration-200 transform"
-                      >
-                        ✏️
-                      </button>
-                      <button 
-                        @click="deleteStudent(student.id)"
-                        class="px-4 py-2 bg-white text-gray-900 border-2 border-gray-900 hover:bg-red-500 hover:text-white font-black uppercase text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all duration-200 transform"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Add/Edit Modal -->
-        <div 
-          v-if="showModal" 
-          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/90 backdrop-blur-md"
-          @click="closeModal"
-        >
-          <div 
-            class="bg-white border-4 border-gray-900 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-[16px_16px_0px_0px_rgba(34,197,94,1)] transform rotate-1"
-            @click.stop
-          >
-            <div class="p-8">
-              <div class="flex justify-between items-center mb-6">
-                <h3 class="text-3xl font-black text-gray-900 uppercase">
-                  {{ editMode ? 'Edit' : 'Tambah' }} Mahasiswa
-                </h3>
-                <button 
-                  @click="closeModal"
-                  class="w-12 h-12 bg-gray-900 text-white border-2 border-gray-900 hover:bg-red-500 font-black text-xl shadow-[4px_4px_0px_0px_rgba(34,197,94,1)] transition-all duration-200"
-                >
-                  X
-                </button>
-              </div>
-
-              <form @submit.prevent="saveStudent" class="space-y-6">
-                <div>
-                  <label class="block text-sm font-black text-gray-900 mb-2 uppercase tracking-wider">Nama Lengkap</label>
-                  <input 
-                    v-model="formData.name"
-                    type="text" 
-                    required
-                    class="w-full px-4 py-3 border-2 border-gray-900 focus:border-green-500 focus:outline-none font-bold"
-                    placeholder="Masukkan nama lengkap"
-                  />
+          <form class="grid gap-5 md:grid-cols-2" @submit.prevent="saveStudent">
+            <div class="grid gap-5 border-4 border-gray-900 bg-gray-50 p-5 md:col-span-2 md:grid-cols-2">
+              <label class="block">
+                <span class="mb-2 block text-sm font-black uppercase">Foto Profil</span>
+                <div class="flex items-center gap-4">
+                  <div class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden border-2 border-gray-900 bg-green-500 text-2xl font-black">
+                    <img v-if="photoPreview" :src="photoPreview" alt="Preview foto profil" class="h-full w-full object-cover">
+                    <svg v-else viewBox="0 0 24 24" aria-hidden="true" class="h-14 w-14 text-gray-900">
+                      <path
+                        fill="currentColor"
+                        d="M12 12c2.76 0 5-2.69 5-6s-2.24-6-5-6-5 2.69-5 6 2.24 6 5 6Zm0 2c-4.42 0-8 2.91-8 6.5 0 .83.67 1.5 1.5 1.5h13c.83 0 1.5-.67 1.5-1.5C20 16.91 16.42 14 12 14Z"
+                      />
+                    </svg>
+                  </div>
+                  <input type="file" accept="image/jpeg,image/png,image/webp" class="min-w-0 flex-1 border-2 border-gray-900 bg-white p-3 text-sm font-bold file:mr-3 file:border-0 file:bg-gray-900 file:px-3 file:py-2 file:font-black file:uppercase file:text-white" @change="selectPhoto($event, 'photo')">
                 </div>
-
-                <div>
-                  <label class="block text-sm font-black text-gray-900 mb-2 uppercase tracking-wider">NIM</label>
-                  <input 
-                    v-model="formData.nim"
-                    type="text" 
-                    required
-                    class="w-full px-4 py-3 border-2 border-gray-900 focus:border-green-500 focus:outline-none font-bold"
-                    placeholder="Masukkan NIM"
-                  />
+                <p class="mt-2 text-xs font-bold text-gray-500">JPG, PNG, atau WebP. Maksimal 5 MB.</p>
+              </label>
+              <label class="block">
+                <span class="mb-2 block text-sm font-black uppercase">Foto Hover / Aib</span>
+                <div class="flex items-center gap-4">
+                  <div class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden border-2 border-gray-900 bg-gray-900 text-2xl font-black text-green-400">
+                    <img v-if="aibPhotoPreview" :src="aibPhotoPreview" alt="Preview foto hover" class="h-full w-full object-cover">
+                    <svg v-else viewBox="0 0 24 24" aria-hidden="true" class="h-14 w-14 text-green-400">
+                      <path
+                        fill="currentColor"
+                        d="M12 12c2.76 0 5-2.69 5-6s-2.24-6-5-6-5 2.69-5 6 2.24 6 5 6Zm0 2c-4.42 0-8 2.91-8 6.5 0 .83.67 1.5 1.5 1.5h13c.83 0 1.5-.67 1.5-1.5C20 16.91 16.42 14 12 14Z"
+                      />
+                    </svg>
+                  </div>
+                  <input type="file" accept="image/jpeg,image/png,image/webp" class="min-w-0 flex-1 border-2 border-gray-900 bg-white p-3 text-sm font-bold file:mr-3 file:border-0 file:bg-gray-900 file:px-3 file:py-2 file:font-black file:uppercase file:text-white" @change="selectPhoto($event, 'aib_photo')">
                 </div>
-
-                <div>
-                  <label class="block text-sm font-black text-gray-900 mb-2 uppercase tracking-wider">Role/Karakter</label>
-                  <input 
-                    v-model="formData.role"
-                    type="text" 
-                    required
-                    class="w-full px-4 py-3 border-2 border-gray-900 focus:border-green-500 focus:outline-none font-bold"
-                    placeholder="Misal: Tukang Tidur, Si Paling Rajin"
-                  />
-                </div>
-
-                <div>
-                  <label class="block text-sm font-black text-gray-900 mb-2 uppercase tracking-wider">Status</label>
-                  <select 
-                    v-model="formData.status"
-                    required
-                    class="w-full px-4 py-3 border-2 border-gray-900 focus:border-green-500 focus:outline-none font-bold bg-white"
-                  >
-                    <option value="active">Aktif</option>
-                    <option value="cuti">Cuti</option>
-                    <option value="alumni">Alumni</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-black text-gray-900 mb-2 uppercase tracking-wider">URL Foto Normal</label>
-                  <input 
-                    v-model="formData.photo"
-                    type="url" 
-                    required
-                    class="w-full px-4 py-3 border-2 border-gray-900 focus:border-green-500 focus:outline-none font-bold"
-                    placeholder="https://example.com/photo.jpg"
-                  />
-                </div>
-
-                <div>
-                  <label class="block text-sm font-black text-gray-900 mb-2 uppercase tracking-wider">URL Foto Aib (Optional)</label>
-                  <input 
-                    v-model="formData.photoAib"
-                    type="url" 
-                    class="w-full px-4 py-3 border-2 border-gray-900 focus:border-green-500 focus:outline-none font-bold"
-                    placeholder="https://example.com/photo-aib.jpg"
-                  />
-                </div>
-
-                <div class="flex gap-4 pt-4">
-                  <button 
-                    type="submit"
-                    class="flex-1 px-6 py-3 bg-gray-900 text-white border-4 border-gray-900 hover:bg-green-500 hover:text-gray-900 font-black uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(34,197,94,1)] hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:-translate-y-1 transition-all duration-200 transform"
-                  >
-                    💾 Simpan
-                  </button>
-                  <button 
-                    type="button"
-                    @click="closeModal"
-                    class="flex-1 px-6 py-3 bg-white text-gray-900 border-4 border-gray-900 hover:bg-gray-100 font-black uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all duration-200 transform"
-                  >
-                    ❌ Batal
-                  </button>
-                </div>
-              </form>
+                <p class="mt-2 text-xs font-bold text-gray-500">Opsional; muncul saat kartu mahasiswa di-hover.</p>
+              </label>
             </div>
+            <label v-for="field in textFields" :key="field.key" class="block">
+              <span class="mb-2 block text-sm font-black uppercase">{{ field.label }}</span>
+              <input v-model="form[field.key]" :type="field.type || 'text'" :required="field.required" class="w-full border-2 border-gray-900 px-4 py-3 font-bold outline-none focus:border-green-500">
+            </label>
+            <label class="block">
+              <span class="mb-2 block text-sm font-black uppercase">Jenis Kelamin</span>
+              <select v-model="form.gender" class="w-full border-2 border-gray-900 bg-white px-4 py-3 font-bold">
+                <option value="">Pilih</option>
+                <option>Laki-laki</option>
+                <option>Perempuan</option>
+              </select>
+            </label>
+            <label class="block">
+              <span class="mb-2 block text-sm font-black uppercase">Status</span>
+              <select v-model="form.status" class="w-full border-2 border-gray-900 bg-white px-4 py-3 font-bold">
+                <option>Aktif</option>
+                <option>Cuti</option>
+                <option>Alumni</option>
+              </select>
+            </label>
+            <div class="flex flex-col gap-4 pt-3 sm:flex-row md:col-span-2">
+              <button :disabled="saving" class="flex-1 border-4 border-gray-900 bg-gray-900 px-6 py-3 font-black uppercase text-white hover:bg-green-500 hover:text-gray-900 disabled:opacity-50">
+                {{ saving ? 'Mengunggah...' : 'Simpan' }}
+              </button>
+              <button type="button" class="flex-1 border-4 border-gray-900 px-6 py-3 font-black uppercase" @click="closeModal">Batal</button>
             </div>
+          </form>
         </div>
+      </div>
+    </Teleport>
+
+    <div v-if="errorMessage" class="fixed bottom-6 right-6 z-[80] max-w-md border-4 border-gray-900 bg-red-500 p-5 font-bold text-white shadow-[6px_6px_0_rgba(0,0,0,1)]">
+      {{ errorMessage }}
+      <button class="ml-3 font-black" @click="errorMessage = ''">×</button>
+    </div>
   </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted } from 'vue'
+<script setup lang="ts">
+type Student = {
+  id: number
+  nim: string
+  name: string
+  email: string | null
+  gender: string | null
+  birth_place: string | null
+  birth_date: string | null
+  religion: string | null
+  phone: string | null
+  class_type: string | null
+  entry_type: string | null
+  role: string
+  status: 'Aktif' | 'Cuti' | 'Alumni'
+  photo: string | null
+  aib_photo: string | null
+}
 
-definePageMeta({
-  layout: 'admin',
-  middleware: 'admin-auth'
-})
+definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 
-const students = ref([])
+const auth = useAdminAuth()
+const config = useRuntimeConfig()
+const { mediaUrl } = useApiMedia()
+const students = ref<Student[]>([])
 const searchQuery = ref('')
 const filterStatus = ref('')
+const loading = ref(true)
+const saving = ref(false)
 const showModal = ref(false)
 const editMode = ref(false)
-const formData = ref({
-  id: null,
-  name: '',
-  nim: '',
-  role: '',
-  status: 'active',
-  photo: '',
-  photoAib: ''
+const errorMessage = ref('')
+const photoFile = ref<File | null>(null)
+const aibPhotoFile = ref<File | null>(null)
+const photoPreview = ref('')
+const aibPhotoPreview = ref('')
+const emptyForm = () => ({
+  id: null as number | null, nim: '', name: '', email: '', gender: '', birth_place: '',
+  birth_date: '', religion: '', phone: '', class_type: '', entry_type: 'Reguler',
+  role: "Mahasiswa TI '23", status: 'Aktif' as Student['status'],
 })
+const form = ref(emptyForm())
+const textFields = [
+  { key: 'nim', label: 'NIM', required: true },
+  { key: 'name', label: 'Nama Lengkap', required: true },
+  { key: 'email', label: 'Email', type: 'email' },
+  { key: 'phone', label: 'Telepon' },
+  { key: 'birth_place', label: 'Tempat Lahir' },
+  { key: 'birth_date', label: 'Tanggal Lahir', type: 'date' },
+  { key: 'religion', label: 'Agama' },
+  { key: 'class_type', label: 'Kelas' },
+  { key: 'entry_type', label: 'Jenis Masuk' },
+  { key: 'role', label: 'Role/Karakter', required: true },
+] as const
 
 const filteredStudents = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase()
   return students.value.filter(student => {
-    const matchesSearch = student.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                         student.nim.includes(searchQuery.value)
-    const matchesStatus = !filterStatus.value || student.status === filterStatus.value
-    return matchesSearch && matchesStatus
+    const matchesQuery = !query || [student.name, student.nim, student.email || ''].some(value => value.toLowerCase().includes(query))
+    return matchesQuery && (!filterStatus.value || student.status === filterStatus.value)
   })
 })
+const headers = computed(() => ({ Authorization: `Bearer ${auth.token.value}` }))
+const formatBirthDate = (date: string | null) => date ? new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium' }).format(new Date(`${date}T00:00:00`)) : '—'
+const apiError = (error: any) => Object.values(error?.data?.errors || {}).flat().join('\n') || error?.data?.message || error?.message || 'Proses gagal.'
+const releasePreview = (preview: string) => {
+  if (preview.startsWith('blob:')) URL.revokeObjectURL(preview)
+}
+const resetPhotos = () => {
+  releasePreview(photoPreview.value)
+  releasePreview(aibPhotoPreview.value)
+  photoFile.value = null
+  aibPhotoFile.value = null
+  photoPreview.value = ''
+  aibPhotoPreview.value = ''
+}
+const selectPhoto = (event: Event, type: 'photo' | 'aib_photo') => {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0] || null
+  if (!file) return
 
+  const targetPreview = type === 'photo' ? photoPreview : aibPhotoPreview
+  releasePreview(targetPreview.value)
+  targetPreview.value = URL.createObjectURL(file)
+
+  if (type === 'photo') photoFile.value = file
+  else aibPhotoFile.value = file
+}
+
+const loadStudents = async () => {
+  loading.value = true
+  try {
+    students.value = await $fetch<Student[]>(`${config.public.apiBase}/admin/students`, { headers: headers.value })
+  } catch (error) {
+    errorMessage.value = apiError(error)
+  } finally {
+    loading.value = false
+  }
+}
 const openAddModal = () => {
   editMode.value = false
-  resetForm()
+  resetPhotos()
+  form.value = emptyForm()
   showModal.value = true
 }
-
-const editStudent = (student) => {
+const openEditModal = (student: Student) => {
   editMode.value = true
-  formData.value = { ...student }
+  resetPhotos()
+  form.value = { ...emptyForm(), ...student }
+  photoPreview.value = student.photo ? mediaUrl(student.photo) : ''
+  aibPhotoPreview.value = student.aib_photo ? mediaUrl(student.aib_photo) : ''
   showModal.value = true
 }
-
 const closeModal = () => {
   showModal.value = false
-  resetForm()
+  resetPhotos()
+  form.value = emptyForm()
 }
+const saveStudent = async () => {
+  saving.value = true
+  try {
+    const payload = new FormData()
+    for (const [key, value] of Object.entries(form.value)) {
+      if (key === 'id' || key === 'photo' || key === 'aib_photo' || value === null || value === '') continue
+      payload.append(key, String(value))
+    }
+    if (photoFile.value) payload.append('photo', photoFile.value)
+    if (aibPhotoFile.value) payload.append('aib_photo', aibPhotoFile.value)
+    if (editMode.value) payload.append('_method', 'PUT')
 
-const resetForm = () => {
-  formData.value = {
-    id: null,
-    name: '',
-    nim: '',
-    role: '',
-    status: 'active',
-    photo: '',
-    photoAib: ''
+    await $fetch(editMode.value ? `${config.public.apiBase}/students/${form.value.id}` : `${config.public.apiBase}/students`, {
+      method: 'POST',
+      headers: headers.value,
+      body: payload,
+    })
+    closeModal()
+    await loadStudents()
+  } catch (error) {
+    errorMessage.value = apiError(error)
+  } finally {
+    saving.value = false
+  }
+}
+const deleteStudent = async (student: Student) => {
+  if (!confirm(`Hapus ${student.name}?`)) return
+  try {
+    await $fetch(`${config.public.apiBase}/students/${student.id}`, { method: 'DELETE', headers: headers.value })
+    await loadStudents()
+  } catch (error) {
+    errorMessage.value = apiError(error)
   }
 }
 
-const saveStudent = () => {
-  if (editMode.value) {
-    const index = students.value.findIndex(s => s.id === formData.value.id)
-    if (index !== -1) {
-      students.value[index] = { ...formData.value }
-    }
-  } else {
-    const newStudent = {
-      ...formData.value,
-      id: Date.now()
-    }
-    students.value.push(newStudent)
-  }
-  closeModal()
-}
+onMounted(loadStudents)
+onBeforeUnmount(() => {
+  resetPhotos()
+  if (import.meta.client) document.body.style.overflow = ''
+})
 
-const deleteStudent = (id) => {
-  if (confirm('Yakin ingin menghapus mahasiswa ini?')) {
-    students.value = students.value.filter(s => s.id !== id)
-  }
-}
-
-const resetFilters = () => {
-  searchQuery.value = ''
-  filterStatus.value = ''
-}
-
-onMounted(() => {
-  students.value = [
-    {
-      id: 1,
-      name: 'Willy Pratama',
-      nim: '2023001',
-      role: 'Korban Monyet',
-      status: 'active',
-      photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
-      photoAib: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80'
-    },
-    {
-      id: 2,
-      name: 'Dhila Azzahra',
-      nim: '2023002',
-      role: 'Si Jidat Terang',
-      status: 'active',
-      photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
-      photoAib: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80'
-    },
-    {
-      id: 3,
-      name: 'Nico Hartanto',
-      nim: '2023003',
-      role: 'The Showman',
-      status: 'active',
-      photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
-      photoAib: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80'
-    }
-  ]
+watch(showModal, (open) => {
+  if (import.meta.client) document.body.style.overflow = open ? 'hidden' : ''
 })
 </script>
-
-<style scoped>
-.font-display {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-}
-</style>

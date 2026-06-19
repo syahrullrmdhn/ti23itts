@@ -11,18 +11,46 @@ class StudentController extends Controller
 {
     public function index()
     {
-        $students = Student::orderBy('name')->get();
+        $students = Student::query()
+            ->where('status', 'Aktif')
+            ->orderBy('name')
+            ->get([
+                'id',
+                'name',
+                'role',
+                'status',
+                'photo',
+                'aib_photo',
+                'fun_fact',
+            ]);
+
         return response()->json($students);
+    }
+
+    public function adminIndex()
+    {
+        return response()->json(
+            Student::query()->orderBy('name')->get()
+        );
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'nim' => 'required|string|max:20|unique:students,nim',
             'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'gender' => 'nullable|string|max:20',
+            'birth_place' => 'nullable|string|max:255',
+            'birth_date' => 'nullable|date',
+            'religion' => 'nullable|string|max:50',
+            'phone' => 'nullable|string|max:30',
+            'class_type' => 'nullable|string|max:30',
+            'entry_type' => 'nullable|string|max:30',
             'role' => 'required|string|max:255',
             'status' => 'required|in:Aktif,Cuti,Alumni',
-            'photo' => 'nullable|image|max:2048',
-            'aib_photo' => 'nullable|image|max:2048',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'aib_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'fun_fact' => 'nullable|string'
         ]);
 
@@ -50,11 +78,20 @@ class StudentController extends Controller
         $student = Student::findOrFail($id);
 
         $validated = $request->validate([
+            'nim' => 'sometimes|required|string|max:20|unique:students,nim,' . $student->id,
             'name' => 'sometimes|required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'gender' => 'nullable|string|max:20',
+            'birth_place' => 'nullable|string|max:255',
+            'birth_date' => 'nullable|date',
+            'religion' => 'nullable|string|max:50',
+            'phone' => 'nullable|string|max:30',
+            'class_type' => 'nullable|string|max:30',
+            'entry_type' => 'nullable|string|max:30',
             'role' => 'sometimes|required|string|max:255',
             'status' => 'sometimes|required|in:Aktif,Cuti,Alumni',
-            'photo' => 'nullable|image|max:2048',
-            'aib_photo' => 'nullable|image|max:2048',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'aib_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'fun_fact' => 'nullable|string'
         ]);
 

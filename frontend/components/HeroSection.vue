@@ -1,34 +1,32 @@
 <template>
-  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900 text-white group">
+  <section id="hero" class="relative flex min-h-screen items-center justify-center overflow-hidden bg-gray-900 text-white">
     
-    <!-- Background Image Grid dari foto mahasiswa di database -->
-    <!-- Efek group-hover: opacity menurun agar teks makin jelas saat kursor masuk -->
-    <div class="absolute inset-0 z-0 grid grid-cols-2 md:grid-cols-4 gap-1 opacity-50 transition-opacity duration-700 group-hover:opacity-20">
+    <div class="absolute inset-0 z-0 grid grid-cols-2 gap-1 opacity-50 md:grid-cols-4">
       <div v-for="(photo, index) in heroPhotos" :key="`${photo}-${index}`" class="aspect-video bg-gray-800 overflow-hidden">
         <img 
           :src="photo"
           alt="Memories" 
-          class="w-full h-full object-cover opacity-40 grayscale hover:grayscale-0 transition-all duration-500 scale-105 hover:scale-100" 
+          class="h-full w-full scale-105 object-cover opacity-50 grayscale transition-all duration-500 hover:scale-100 hover:grayscale-0"
         />
       </div>
     </div>
     
     <!-- Dark Overlay -->
     <!-- Efek group-hover: overlay menjadi lebih pekat saat di-hover -->
-    <div class="absolute inset-0 bg-gray-900/60 transition-colors duration-700 group-hover:bg-gray-900/85 z-0"></div>
+    <div class="absolute inset-0 z-0 bg-gray-900/60"></div>
     
     <!-- Hero Content -->
     <div class="relative z-10 text-center px-4 max-w-6xl mx-auto flex flex-col items-center">
       
       <!-- Badge / Tagline Awal -->
-      <div class="mb-10 transform -rotate-2 hover:rotate-0 transition-transform duration-300">
+      <div v-reveal="'zoom'" class="mb-10 transform -rotate-2 transition-transform duration-300 hover:rotate-0">
         <span class="inline-block px-6 py-2 bg-gray-800 border-2 border-green-500 text-green-400 font-bold text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(34,197,94,1)]">
           Angkatan 2023
         </span>
       </div>
       
       <!-- Main Title (Boxed Text Style) -->
-      <h1 class="font-display text-6xl md:text-8xl lg:text-9xl font-black mb-10 flex flex-col items-center gap-4">
+      <h1 v-reveal="'up'" class="mb-10 flex flex-col items-center gap-4 font-display text-6xl font-black md:text-8xl lg:text-9xl">
         <!-- Teks Baris 1: Miring ke kiri -->
         <span class="inline-block bg-green-500 text-gray-900 px-8 py-1 transform -rotate-3 hover:-translate-y-2 hover:rotate-0 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]">
           TI'23
@@ -40,19 +38,19 @@
       </h1>
       
       <!-- Subtitle Boxed -->
-      <div class="mb-8 transform -rotate-1 hover:rotate-1 transition-transform duration-300">
+      <div v-reveal="'left'" class="mb-8 transform -rotate-1 transition-transform duration-300 hover:rotate-1">
         <span class="inline-block px-6 py-3 bg-gray-800 text-white text-2xl md:text-3xl font-bold shadow-[6px_6px_0px_0px_rgba(0,0,0,0.5)] border border-gray-700">
           How fun we are!
         </span>
       </div>
       
       <!-- Description Panel -->
-      <p class="text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto font-medium bg-gray-900/60 p-6 rounded-none border-l-4 border-green-500 backdrop-blur-sm shadow-2xl transition-all duration-500 group-hover:bg-gray-900/80">
+      <p v-reveal="'right'" class="mx-auto mb-12 max-w-2xl border-l-4 border-green-500 bg-gray-900/70 p-6 text-lg font-medium text-gray-300 shadow-2xl backdrop-blur-sm md:text-xl">
         Digital Yearbook Angkatan TI 2023 Institut Teknologi Tangerang Selatan - Tempat nongkrong digital yang nyimpen semua memori, dari yang keren sampai aib legendaris!
       </p>
       
       <!-- Call to Action Buttons (Neo-Brutalism Style) -->
-      <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mt-4">
+      <div v-reveal="'up'" class="mt-4 flex flex-col items-center justify-center gap-6 sm:flex-row">
         <a 
           href="#episodes" 
           class="px-8 py-4 bg-green-500 text-gray-900 font-black uppercase tracking-wider transform hover:-translate-y-1 hover:scale-105 transition-all duration-200 shadow-[6px_6px_0px_0px_rgba(255,255,255,0.2)] active:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] active:translate-y-1"
@@ -77,23 +75,30 @@ import { computed, onMounted, ref } from 'vue'
 
 const config = useRuntimeConfig()
 const { mediaUrl } = useApiMedia()
-const studentPhotos = ref([])
+const customHeroPhotos = ref([])
+const fallbackHeroPhotos = [
+  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?auto=format&fit=crop&w=1200&q=80',
+]
 
 const heroPhotos = computed(() => {
-  const photos = studentPhotos.value.length
-    ? studentPhotos.value
-    : [mediaUrl(null)]
+  const photos = customHeroPhotos.value.length
+    ? customHeroPhotos.value
+    : fallbackHeroPhotos
 
   return Array.from({ length: 16 }, (_, index) => photos[index % photos.length])
 })
 
 onMounted(async () => {
   try {
-    const students = await $fetch(`${config.public.apiBase}/students`)
-    studentPhotos.value = students
-      .flatMap(student => [student.photo, student.aib_photo])
-      .filter(Boolean)
-      .map(mediaUrl)
+    const heroPhotosFromApi = await $fetch(`${config.public.apiBase}/hero-photos`)
+    customHeroPhotos.value = heroPhotosFromApi.map(photo => mediaUrl(photo.path))
   } catch (error) {
     console.error('Gagal memuat foto hero dari database', error)
   }

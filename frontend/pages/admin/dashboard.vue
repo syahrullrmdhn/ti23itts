@@ -112,6 +112,63 @@
       </div>
       
     </section>
+
+    <section class="bg-white border-4 border-gray-900 p-8 shadow-[8px_8px_0px_0px_rgba(17,24,39,1)]">
+      <div class="flex flex-col gap-4 border-b-4 border-gray-900 pb-6 md:flex-row md:items-start md:justify-between">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.2em] text-gray-500">Hero Background</p>
+          <h2 class="mt-3 text-3xl font-black uppercase">Foto Belakang Hero Section</h2>
+          <p class="mt-2 max-w-3xl font-bold text-gray-600">
+            Default-nya pakai foto random dari Unsplash. Begitu kamu upload di sini, HeroSection langsung pakai foto custom ini.
+          </p>
+        </div>
+        <label class="inline-flex cursor-pointer items-center justify-center border-4 border-gray-900 bg-gray-900 px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(34,197,94,1)] hover:bg-green-500 hover:text-gray-900">
+          {{ heroUploading ? 'Mengunggah...' : '+ Upload Foto Hero' }}
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            class="hidden"
+            :disabled="heroUploading"
+            @change="uploadHeroPhoto"
+          >
+        </label>
+      </div>
+
+      <div v-if="heroPhotos.length" class="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <article
+          v-for="photo in heroPhotos"
+          :key="photo.id"
+          class="overflow-hidden border-4 border-gray-900 bg-gray-50 shadow-[6px_6px_0px_0px_rgba(17,24,39,1)]"
+        >
+          <div class="aspect-video bg-gray-900">
+            <img :src="mediaUrl(photo.path)" alt="Hero background" class="h-full w-full object-cover">
+          </div>
+          <div class="flex items-center justify-between gap-3 border-t-4 border-gray-900 p-4">
+            <p class="text-sm font-black uppercase text-gray-500">Custom Hero</p>
+            <button
+              class="border-2 border-gray-900 bg-white px-3 py-2 text-xs font-black uppercase hover:bg-red-500 hover:text-white disabled:opacity-50"
+              :disabled="heroDeletingId === photo.id"
+              @click="deleteHeroPhoto(photo.id)"
+            >
+              {{ heroDeletingId === photo.id ? 'Menghapus...' : 'Hapus' }}
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <div v-else class="mt-6 border-4 border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+        <p class="text-lg font-black uppercase text-gray-900">Belum ada foto hero custom.</p>
+        <p class="mt-2 font-bold text-gray-600">Website masih pakai koleksi foto random dari Unsplash sampai kamu upload sendiri.</p>
+      </div>
+    </section>
+
+    <div
+      v-if="errorMessage"
+      class="fixed bottom-6 right-6 z-[90] max-w-md border-4 border-gray-900 bg-red-500 p-5 font-bold text-white shadow-[6px_6px_0px_0px_rgba(17,24,39,1)]"
+    >
+      {{ errorMessage }}
+      <button class="ml-3 font-black" @click="errorMessage = ''">×</button>
+    </div>
   </div>
 </template>
 
@@ -124,6 +181,7 @@ definePageMeta({
 
 const auth = useAdminAuth()
 const config = useRuntimeConfig()
+const { mediaUrl } = useApiMedia()
 
 const stats = ref([
   { label: 'Total Mahasiswa', value: 42, icon: '👥', tag: 'Active' },
@@ -162,6 +220,10 @@ const recentActivities = ref([
     time: '1 hari lalu',
   },
 ])
+const heroPhotos = ref<Array<{ id: number; path: string }>>([])
+const heroUploading = ref(false)
+const heroDeletingId = ref<number | null>(null)
+const errorMessage = ref('')
 
 type DashboardResponse = {
   stats: {
@@ -179,6 +241,68 @@ type DashboardResponse = {
   }>
 }
 
+const requestHeaders = computed(() => ({
+  Authorization: `Bearer ${auth.token.value}`,
+}))
+
+const apiError = (error: any) => {
+  const validationErrors = error?.data?.errors
+  if (validationErrors) {
+    return Object.values(validationErrors).flat().join('\n')
+  }
+
+  return error?.data?.message || error?.message || 'Terjadi kesalahan saat memproses foto hero.'
+}
+
+const loadHeroPhotos = async () => {
+  heroPhotos.value = await $fetch<Array<{ id: number; path: string }>>(`${config.public.apiBase}/hero-photos`)
+}
+
+const uploadHeroPhoto = async (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+
+  heroUploading.value = true
+  errorMessage.value = ''
+
+  try {
+    const payload = new FormData()
+    payload.append('photo', file)
+
+    await $fetch(`${config.public.apiBase}/hero-photos`, {
+      method: 'POST',
+      headers: requestHeaders.value,
+      body: payload,
+    })
+
+    await loadHeroPhotos()
+  } catch (error) {
+    errorMessage.value = apiError(error)
+  } finally {
+    heroUploading.value = false
+    input.value = ''
+  }
+}
+
+const deleteHeroPhoto = async (id: number) => {
+  heroDeletingId.value = id
+  errorMessage.value = ''
+
+  try {
+    await $fetch(`${config.public.apiBase}/hero-photos/${id}`, {
+      method: 'DELETE',
+      headers: requestHeaders.value,
+    })
+
+    heroPhotos.value = heroPhotos.value.filter(photo => photo.id !== id)
+  } catch (error) {
+    errorMessage.value = apiError(error)
+  } finally {
+    heroDeletingId.value = null
+  }
+}
+
 onMounted(async () => {
   auth.restore()
 
@@ -188,9 +312,7 @@ onMounted(async () => {
 
   try {
     const data = await $fetch<DashboardResponse>(`${config.public.apiBase}/dashboard`, {
-      headers: {
-        Authorization: `Bearer ${auth.token.value}`,
-      },
+      headers: requestHeaders.value,
     })
 
     stats.value = [
@@ -201,8 +323,9 @@ onMounted(async () => {
     ]
 
     recentActivities.value = data.recentActivities
+    await loadHeroPhotos()
   } catch (error) {
-    console.error('Gagal memuat dashboard summary', error)
+    errorMessage.value = apiError(error)
   }
 })
 </script>
