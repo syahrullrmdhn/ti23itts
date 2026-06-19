@@ -22,9 +22,28 @@ class StudentController extends Controller
                 'photo',
                 'aib_photo',
                 'fun_fact',
+                'message',
             ]);
 
         return response()->json($students);
+    }
+
+    public function publicShow(string $id)
+    {
+        $student = Student::query()
+            ->where('status', 'Aktif')
+            ->findOrFail($id, [
+                'id',
+                'name',
+                'role',
+                'status',
+                'photo',
+                'aib_photo',
+                'fun_fact',
+                'message',
+            ]);
+
+        return response()->json($student);
     }
 
     public function adminIndex()
@@ -51,7 +70,8 @@ class StudentController extends Controller
             'status' => 'required|in:Aktif,Cuti,Alumni',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'aib_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-            'fun_fact' => 'nullable|string'
+            'fun_fact' => 'nullable|string',
+            'message' => 'nullable|string',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -92,7 +112,8 @@ class StudentController extends Controller
             'status' => 'sometimes|required|in:Aktif,Cuti,Alumni',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'aib_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-            'fun_fact' => 'nullable|string'
+            'fun_fact' => 'nullable|string',
+            'message' => 'nullable|string',
         ]);
 
         if ($request->hasFile('photo')) {

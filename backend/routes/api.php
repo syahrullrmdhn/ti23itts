@@ -14,7 +14,10 @@ use App\Http\Controllers\Api\HeroPhotoController;
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/students', [StudentController::class, 'index']);
+Route::get('/students/{id}/public', [StudentController::class, 'publicShow']);
 Route::get('/episodes', [EpisodeController::class, 'index']);
+Route::post('/episodes/{id}/like', [EpisodeController::class, 'like']);
+Route::post('/episodes/{id}/comment', [EpisodeController::class, 'comment']);
 Route::get('/timeline', [TimelineController::class, 'index']);
 Route::get('/hero-photos', [HeroPhotoController::class, 'index']);
 

@@ -18,4 +18,14 @@ class Episode extends Model
         'date',
         'participants'
     ];
+
+    public function likes()
+    {
+        return $this->hasMany(EpisodeLike::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(EpisodeComment::class);
+    }
 }

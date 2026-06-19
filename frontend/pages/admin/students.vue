@@ -131,6 +131,14 @@
               <span class="mb-2 block text-sm font-black uppercase">{{ field.label }}</span>
               <input v-model="form[field.key]" :type="field.type || 'text'" :required="field.required" class="w-full border-2 border-gray-900 px-4 py-3 font-bold outline-none focus:border-green-500">
             </label>
+            <label class="block md:col-span-2">
+              <span class="mb-2 block text-sm font-black uppercase">Fun Fact</span>
+              <textarea v-model="form.fun_fact" rows="3" class="w-full resize-none border-2 border-gray-900 px-4 py-3 font-bold outline-none focus:border-green-500"></textarea>
+            </label>
+            <label class="block md:col-span-2">
+              <span class="mb-2 block text-sm font-black uppercase">Pesan Buat Teman-teman</span>
+              <textarea v-model="form.message" rows="4" class="w-full resize-none border-2 border-gray-900 px-4 py-3 font-bold outline-none focus:border-green-500"></textarea>
+            </label>
             <label class="block">
               <span class="mb-2 block text-sm font-black uppercase">Jenis Kelamin</span>
               <select v-model="form.gender" class="w-full border-2 border-gray-900 bg-white px-4 py-3 font-bold">
@@ -182,6 +190,8 @@ type Student = {
   status: 'Aktif' | 'Cuti' | 'Alumni'
   photo: string | null
   aib_photo: string | null
+  fun_fact: string | null
+  message: string | null
 }
 
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
@@ -204,7 +214,7 @@ const aibPhotoPreview = ref('')
 const emptyForm = () => ({
   id: null as number | null, nim: '', name: '', email: '', gender: '', birth_place: '',
   birth_date: '', religion: '', phone: '', class_type: '', entry_type: 'Reguler',
-  role: "Mahasiswa TI '23", status: 'Aktif' as Student['status'],
+  role: "Mahasiswa TI '23", status: 'Aktif' as Student['status'], fun_fact: '', message: '',
 })
 const form = ref(emptyForm())
 const textFields = [

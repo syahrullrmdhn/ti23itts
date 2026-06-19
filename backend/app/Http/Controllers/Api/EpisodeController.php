@@ -4,7 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Episode;
+use App\Models\EpisodeComment;
+use App\Models\EpisodeLike;
+use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -140,8 +144,24 @@ class EpisodeController extends Controller
 
     public function index()
     {
-        $episodes = Episode::orderBy('created_at', 'desc')->get();
-        return response()->json($episodes);
+        $episodes = Episode::query()
+            ->withCount(['likes', 'comments'])
+            ->with([
+                'comments' => fn ($query) => $query->latest(),
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $topEpisodeId = $this->resolveTopEpisodeId($episodes);
+
+        return response()->json(
+            $episodes->map(function (Episode $episode) use ($topEpisodeId) {
+                return [
+                    ...$episode->toArray(),
+                    'is_top_banyak_dicari' => $episode->id === $topEpisodeId,
+                ];
+            })
+        );
     }
 
     public function store(Request $request)
@@ -182,5 +202,77 @@ class EpisodeController extends Controller
         $episode->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function like(Request $request, string $id)
+    {
+        $episode = Episode::findOrFail($id);
+        $student = $this->resolveStudentByNim($request);
+
+        if (EpisodeLike::query()->where('episode_id', $episode->id)->where('student_nim', $student->nim)->exists()) {
+            throw ValidationException::withMessages([
+                'nim' => 'Like hanya boleh satu kali per episode.',
+            ]);
+        }
+
+        EpisodeLike::query()->create([
+            'episode_id' => $episode->id,
+            'student_nim' => $student->nim,
+            'student_name' => $student->name,
+        ]);
+
+        return response()->json([
+            'message' => 'Like berhasil disimpan.',
+            'likes_count' => $episode->likes()->count(),
+        ]);
+    }
+
+    public function comment(Request $request, string $id)
+    {
+        $episode = Episode::findOrFail($id);
+        $student = $this->resolveStudentByNim($request);
+
+        $validated = $request->validate([
+            'comment' => 'required|string|max:1000',
+        ]);
+
+        if (EpisodeComment::query()->where('episode_id', $episode->id)->where('student_nim', $student->nim)->exists()) {
+            throw ValidationException::withMessages([
+                'nim' => 'Komentar hanya boleh satu kali per episode.',
+            ]);
+        }
+
+        $comment = EpisodeComment::create([
+            'episode_id' => $episode->id,
+            'student_nim' => $student->nim,
+            'student_name' => $student->name,
+            'comment' => $validated['comment'],
+        ]);
+
+        return response()->json([
+            'message' => 'Komentar berhasil dikirim.',
+            'comment' => $comment,
+            'comments_count' => $episode->comments()->count(),
+        ], 201);
+    }
+
+    private function resolveStudentByNim(Request $request): Student
+    {
+        $validated = $request->validate([
+            'nim' => 'required|string|exists:students,nim',
+        ]);
+
+        return Student::query()->where('nim', $validated['nim'])->firstOrFail();
+    }
+
+    private function resolveTopEpisodeId(Collection $episodes): ?int
+    {
+        return $episodes
+            ->sortByDesc(function (Episode $episode) {
+                $score = ($episode->likes_count ?? 0) + ($episode->comments_count ?? 0);
+
+                return sprintf('%010d-%010d-%010d', $score, $episode->comments_count ?? 0, $episode->likes_count ?? 0);
+            })
+            ->first()?->id;
     }
 }

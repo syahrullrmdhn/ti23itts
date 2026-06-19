@@ -29,9 +29,10 @@
 
       <!-- Students Grid -->
       <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <div 
+        <NuxtLink
           v-for="student in paginatedStudents"
           :key="student.id"
+          :to="`/crew/${student.id}`"
           v-reveal="'up'"
           class="group relative"
         >
@@ -82,7 +83,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </NuxtLink>
       </div>
 
       <div v-if="totalPages > 1" v-reveal="'up'" class="mt-12 flex flex-col items-center gap-4">

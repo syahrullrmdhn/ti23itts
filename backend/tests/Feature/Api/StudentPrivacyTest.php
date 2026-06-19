@@ -72,6 +72,26 @@ class StudentPrivacyTest extends TestCase
             ->assertJsonPath('0.email', 'student@example.com');
     }
 
+    public function test_public_student_detail_shows_safe_profile_fields_only(): void
+    {
+        $student = Student::create([
+            'nim' => '1002230001',
+            'name' => 'Mahasiswa Aktif',
+            'email' => 'student@example.com',
+            'role' => "Mahasiswa TI '23",
+            'status' => 'Aktif',
+            'fun_fact' => 'Suka begadang.',
+            'message' => 'Tetap saling dukung ya.',
+        ]);
+
+        $this->getJson("/api/students/{$student->id}/public")
+            ->assertOk()
+            ->assertJsonPath('name', 'Mahasiswa Aktif')
+            ->assertJsonPath('message', 'Tetap saling dukung ya.')
+            ->assertJsonMissingPath('nim')
+            ->assertJsonMissingPath('email');
+    }
+
     public function test_unauthenticated_api_request_without_json_accept_header_returns_401(): void
     {
         $this->get('/api/admin/students')

@@ -22,6 +22,7 @@ class Student extends Model
         'photo',
         'aib_photo',
         'fun_fact',
+        'message',
     ];
 
     protected $casts = [
