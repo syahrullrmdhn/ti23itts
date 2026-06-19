@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <NuxtLayout name="admin">
-      <div class="space-y-8">
+  <div class="space-y-8">
         <!-- Page Header -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
@@ -237,8 +235,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </NuxtLayout>
   </div>
 </template>
 
@@ -246,7 +242,7 @@
 import { ref, onMounted } from 'vue'
 
 definePageMeta({
-  layout: false,
+  layout: 'admin',
   middleware: 'admin-auth'
 })
 
