@@ -4,7 +4,12 @@ type RevealElement = HTMLElement & {
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.directive('reveal', {
+    getSSRProps() {
+      return {}
+    },
     mounted(el: RevealElement, binding) {
+      if (!import.meta.client) return
+
       const variant = typeof binding.value === 'string' ? binding.value : 'up'
 
       el.classList.add('reveal-ready', `reveal-${variant}`)
