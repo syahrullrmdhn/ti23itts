@@ -249,6 +249,34 @@ const { data: student, pending, refresh } = await useFetch<CrewProfile>(`${confi
   }),
 })
 
+const crewTitle = computed(() => student.value ? `${student.value.name} - Cast & Crew TI'23 ITTS` : "Cast & Crew TI'23 ITTS")
+const crewDescription = computed(() => {
+  if (!student.value) {
+    return 'Lihat profile mahasiswa TI’23 ITTS, pesan teman-teman, dan badge lucu yang paling nempel.'
+  }
+
+  return student.value.fun_fact
+    || student.value.message
+    || `Kenalan sama ${student.value.name}, bagian penting dari perjalanan TI'23 ITTS.`
+})
+const crewImage = computed(() => student.value?.photo || `${config.public.siteUrl}/social-preview.svg`)
+const crewUrl = computed(() => `${config.public.siteUrl}/crew/${route.params.id}`)
+
+useSeoMeta({
+  title: crewTitle,
+  description: crewDescription,
+  ogTitle: crewTitle,
+  ogDescription: crewDescription,
+  ogType: 'profile',
+  ogUrl: crewUrl,
+  ogImage: crewImage,
+  ogImageAlt: crewTitle,
+  twitterCard: 'summary_large_image',
+  twitterTitle: crewTitle,
+  twitterDescription: crewDescription,
+  twitterImage: crewImage,
+})
+
 const activePhoto = computed(() => {
   if (!student.value) return mediaUrl(null)
   return showAltPhoto.value ? (student.value.aib_photo || student.value.photo || mediaUrl(null)) : (student.value.photo || mediaUrl(null))

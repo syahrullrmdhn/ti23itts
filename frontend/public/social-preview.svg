@@ -1,0 +1,14 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#111827"/>
+  <rect x="88" y="74" width="384" height="84" fill="#ffffff" stroke="#22C55E" stroke-width="8" transform="rotate(-3 88 74)"/>
+  <rect x="122" y="172" width="404" height="92" fill="#22C55E" stroke="#ffffff" stroke-width="8" transform="rotate(2 122 172)"/>
+  <text x="126" y="132" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="900">TI'23 ITTS</text>
+  <text x="156" y="236" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="68" font-weight="900">YEARBOOK</text>
+  <rect x="88" y="328" width="1024" height="168" fill="#1F2937" stroke="#ffffff" stroke-width="8"/>
+  <text x="136" y="392" fill="#22C55E" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800">Digital Yearbook Angkatan TI 2023</text>
+  <text x="136" y="446" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="900">Cast &amp; Crew, Hall of Shame, Timeline,</text>
+  <text x="136" y="496" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="900">dan semua memori seru satu angkatan.</text>
+  <rect x="852" y="78" width="256" height="256" rx="24" fill="#22C55E" stroke="#ffffff" stroke-width="8"/>
+  <path d="M980 200c35.346 0 64-34.027 64-76S1015.35 48 980 48s-64 34.027-64 76 28.654 76 64 76Zm0 24c-56.569 0-102.4 37.248-102.4 83.2 0 10.61 8.59 19.2 19.2 19.2h166.4c10.61 0 19.2-8.59 19.2-19.2 0-45.952-45.83-83.2-102.4-83.2Z" fill="#111827"/>
+  <text x="88" y="572" fill="#9CA3AF" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Institut Teknologi Tangerang Selatan</text>
+</svg>

@@ -177,6 +177,12 @@
                 <div class="border-2 border-gray-900 bg-white px-4 py-2 text-gray-900 shadow-[3px_3px_0px_0px_rgba(34,197,94,1)]">
                   👥 {{ selectedEpisode.participants }}
                 </div>
+                <NuxtLink
+                  :to="`/episodes/${selectedEpisode.id}`"
+                  class="border-2 border-gray-900 bg-green-500 px-4 py-2 text-gray-900 shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] transition-all hover:-translate-y-1"
+                >
+                  Buka Halaman Episode
+                </NuxtLink>
               </div>
 
               <div class="mt-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">

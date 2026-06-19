@@ -189,6 +189,27 @@ class EpisodeController extends Controller
         return response()->json($episode);
     }
 
+    public function publicShow(string $id)
+    {
+        $episode = Episode::query()
+            ->withCount(['likes', 'comments'])
+            ->with([
+                'comments' => fn ($query) => $query->latest(),
+            ])
+            ->findOrFail($id);
+
+        $topEpisodeId = $this->resolveTopEpisodeId(
+            Episode::query()
+                ->withCount(['likes', 'comments'])
+                ->get()
+        );
+
+        return response()->json([
+            ...$episode->toArray(),
+            'is_top_banyak_dicari' => $episode->id === $topEpisodeId,
+        ]);
+    }
+
     public function update(Request $request, string $id)
     {
         $episode = Episode::findOrFail($id);

@@ -21,6 +21,7 @@ Route::put('/students/{studentId}/messages/{messageId}', [StudentController::cla
 Route::delete('/students/{studentId}/messages/{messageId}', [StudentController::class, 'destroyWallMessage']);
 Route::post('/students/{id}/vote', [StudentController::class, 'vote']);
 Route::get('/episodes', [EpisodeController::class, 'index']);
+Route::get('/episodes/{id}/public', [EpisodeController::class, 'publicShow']);
 Route::post('/episodes/{id}/like', [EpisodeController::class, 'like']);
 Route::post('/episodes/{id}/comment', [EpisodeController::class, 'comment']);
 Route::put('/episodes/{episodeId}/comment/{commentId}', [EpisodeController::class, 'updateComment']);
