@@ -1,7 +1,7 @@
 <template>
   <aside
     class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r-4 border-white bg-gray-900 text-white transition-transform duration-300 lg:translate-x-0"
-    :class="open ? 'translate-x-0' : '-translate-x-full'"
+    :class="open ? 'translate-x-0 lg:translate-x-0' : '-translate-x-full lg:translate-x-0'"
   >
     <div class="border-b-4 border-white px-5 py-6">
       <NuxtLink

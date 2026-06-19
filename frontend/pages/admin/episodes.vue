@@ -83,7 +83,6 @@
             </div>
           </div>
         </div>
-      </div>
 
       <!-- Add/Edit Modal -->
       <div 
