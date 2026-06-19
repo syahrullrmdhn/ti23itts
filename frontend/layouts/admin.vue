@@ -1,78 +1,58 @@
 <template>
-  <div class="min-h-screen bg-[#f3f5ef] text-slate-900">
-    <div
-      v-if="sidebarOpen"
-      class="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm lg:hidden"
+  <div class="min-h-screen bg-gray-50 flex font-sans selection:bg-green-500 selection:text-gray-900">
+    
+    <!-- Sidebar Component (Dari folder components/admin/Sidebar.vue) -->
+    <AdminSidebar 
+      :open="sidebarOpen" 
+      @close="sidebarOpen = false" 
+      @logout="handleLogout" 
+    />
+
+    <!-- Overlay untuk nutup sidebar di layar HP -->
+    <div 
+      v-if="sidebarOpen" 
+      class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-40 lg:hidden" 
       @click="sidebarOpen = false"
-    />
+    ></div>
 
-    <AdminSidebar
-      :open="sidebarOpen"
-      @close="sidebarOpen = false"
-      @logout="handleLogout"
-    />
-
-    <div class="lg:pl-72">
-      <header class="sticky top-0 z-30 border-b-4 border-slate-950 bg-[#f3f5ef]/95 backdrop-blur">
-        <div class="flex items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-10">
-          <div class="flex items-center gap-3">
-            <button
-              class="inline-flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-slate-950 bg-white text-xl lg:hidden"
-              @click="sidebarOpen = true"
-            >
-              ☰
-            </button>
-            <div>
-              <p class="text-xs font-black uppercase tracking-[0.3em] text-slate-500">Admin Panel</p>
-              <h2 class="text-xl font-black uppercase text-slate-950 sm:text-2xl">{{ currentTitle }}</h2>
-            </div>
-          </div>
-
-          <div class="hidden rounded-2xl border-2 border-slate-950 bg-white px-4 py-3 shadow-[6px_6px_0px_0px_rgba(15,23,42,0.08)] sm:block">
-            <p class="text-xs font-black uppercase tracking-[0.25em] text-slate-500">Session</p>
-            <p class="text-sm font-bold text-slate-900">{{ auth.user.value?.name || 'Admin TI23' }}</p>
-          </div>
-        </div>
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 transition-all duration-300 lg:ml-72">
+      
+      <!-- Mobile Header (Hamburger Menu) - Hanya muncul di HP -->
+      <header class="lg:hidden bg-white border-b-4 border-gray-900 p-4 flex justify-between items-center sticky top-0 z-30 shadow-sm">
+        <div class="font-black uppercase tracking-widest text-lg text-gray-900">Markas Admin</div>
+        <button 
+          @click="sidebarOpen = true" 
+          class="bg-green-500 border-2 border-gray-900 px-4 py-2 text-sm font-black uppercase shadow-[2px_2px_0px_0px_rgba(17,24,39,1)] active:translate-y-0.5 active:translate-x-0.5 active:shadow-[0px_0px_0px_0px_rgba(17,24,39,1)]"
+        >
+          MENU
+        </button>
       </header>
 
-      <main class="px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+      <!-- Tempat konten halaman di-render (seperti dashboard, students, dll) -->
+      <main class="flex-1 p-4 sm:p-8 overflow-x-hidden">
         <slot />
       </main>
+      
     </div>
   </div>
 </template>
 
 <script setup>
-const route = useRoute()
+import { ref } from 'vue'
+
 const sidebarOpen = ref(false)
+
+// Pastikan composable ini sudah sesuai dengan logic auth kamu
 const auth = useAdminAuth()
 
-const currentTitle = computed(() => {
-  if (route.path === '/admin/dashboard') {
-    return 'Dashboard'
-  }
-
-  if (route.path === '/admin/students') {
-    return 'Mahasiswa'
-  }
-
-  if (route.path === '/admin/episodes') {
-    return 'Episodes'
-  }
-
-  if (route.path === '/admin/timeline') {
-    return 'Timeline'
-  }
-
-  return 'Admin Panel'
-})
-
-watch(() => route.fullPath, () => {
-  sidebarOpen.value = false
-})
-
 const handleLogout = async () => {
-  await auth.logout()
-  await navigateTo('/admin')
+  try {
+    await auth.logout()
+    // Arahkan kembali ke halaman login (index admin)
+    navigateTo('/admin')
+  } catch (error) {
+    console.error('Logout gagal', error)
+  }
 }
 </script>

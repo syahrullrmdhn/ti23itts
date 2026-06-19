@@ -83,10 +83,11 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Add/Edit Modal -->
-        <div 
-          v-if="showModal" 
+      <!-- Add/Edit Modal -->
+      <div 
+        v-if="showModal" 
           class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/90 backdrop-blur-md"
           @click="closeModal"
         >

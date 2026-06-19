@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-8 font-sans text-gray-900">
+  <div class="space-y-8 text-gray-900">
     
     <!-- ==========================================
          1. WELCOME & ADMIN STATUS
@@ -26,7 +26,7 @@
         <div class="space-y-4">
           <div class="bg-gray-100 border-2 border-gray-900 p-4 shadow-[4px_4px_0px_0px_rgba(17,24,39,1)]">
             <p class="text-xs font-black uppercase tracking-widest text-gray-500">Kamu lagi login pakai:</p>
-            <p class="mt-1 text-lg font-black text-gray-900">{{ auth.user.value?.email || 'admin@ti23.com' }}</p>
+            <p class="mt-1 text-lg font-black text-gray-900 truncate">{{ auth.user.value?.email || 'admin@ti23.com' }}</p>
           </div>
           <div class="bg-yellow-300 border-2 border-gray-900 p-4 shadow-[4px_4px_0px_0px_rgba(17,24,39,1)]">
             <p class="text-xs font-black uppercase tracking-widest text-gray-900">Status Sistem:</p>
@@ -105,7 +105,6 @@
             <p class="text-xs font-black uppercase tracking-widest text-gray-400 pt-1 whitespace-nowrap">{{ activity.time }}</p>
           </article>
           
-          <!-- Empty state for activity (Opsional) -->
           <div v-if="recentActivities.length === 0" class="text-center py-8 border-2 border-dashed border-gray-300 bg-gray-50">
             <p class="font-bold text-gray-500">Belum ada aktivitas hari ini. Yuk mulai kerja!</p>
           </div>
@@ -117,6 +116,7 @@
 </template>
 
 <script setup lang="ts">
+// Menyambungkan halaman ini dengan layouts/admin.vue
 definePageMeta({
   layout: 'admin',
   middleware: 'admin-auth',

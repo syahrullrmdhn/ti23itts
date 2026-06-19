@@ -1,114 +1,84 @@
 <template>
-  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-white">
-    <!-- Animated Background Memories -->
-    <div class="absolute inset-0 z-0">
-      <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 p-4 h-full animate-scroll">
-        <div 
-          v-for="(img, i) in memoryImages" 
-          :key="i" 
-          class="aspect-square rounded-lg overflow-hidden opacity-20 hover:opacity-40 transition-opacity"
-        >
-          <img 
-            :src="img" 
-            class="w-full h-full object-cover"
-            alt="Memory"
-          />
-        </div>
+  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900 text-white group">
+    
+    <!-- Background Image Grid (Dummy dari Unsplash) -->
+    <!-- Efek group-hover: opacity menurun agar teks makin jelas saat kursor masuk -->
+    <div class="absolute inset-0 z-0 grid grid-cols-2 md:grid-cols-4 gap-1 opacity-50 transition-opacity duration-700 group-hover:opacity-20">
+      <div v-for="i in 16" :key="i" class="aspect-video bg-gray-800 overflow-hidden">
+        <img 
+          :src="`https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80&random=${i}`" 
+          alt="Memories" 
+          class="w-full h-full object-cover opacity-40 grayscale hover:grayscale-0 transition-all duration-500 scale-105 hover:scale-100" 
+        />
       </div>
     </div>
     
-    <div class="relative z-10 text-center px-4 max-w-6xl mx-auto">
-      <div class="mb-8">
-        <span class="inline-block px-6 py-2 bg-green-500/10 text-green-600 font-bold rounded-full text-sm uppercase tracking-wider mb-6 border border-green-200">
+    <!-- Dark Overlay -->
+    <!-- Efek group-hover: overlay menjadi lebih pekat saat di-hover -->
+    <div class="absolute inset-0 bg-gray-900/60 transition-colors duration-700 group-hover:bg-gray-900/85 z-0"></div>
+    
+    <!-- Hero Content -->
+    <div class="relative z-10 text-center px-4 max-w-6xl mx-auto flex flex-col items-center">
+      
+      <!-- Badge / Tagline Awal -->
+      <div class="mb-10 transform -rotate-2 hover:rotate-0 transition-transform duration-300">
+        <span class="inline-block px-6 py-2 bg-gray-800 border-2 border-green-500 text-green-400 font-bold text-sm uppercase tracking-wider shadow-[4px_4px_0px_0px_rgba(34,197,94,1)]">
           Angkatan 2023
         </span>
       </div>
       
-      <h1 class="font-display text-6xl md:text-8xl lg:text-9xl font-black mb-6 leading-tight text-gray-900">
-        TI'23
-        <br>
-        <span class="text-green-500">Insiders</span>
+      <!-- Main Title (Boxed Text Style) -->
+      <h1 class="font-display text-6xl md:text-8xl lg:text-9xl font-black mb-10 flex flex-col items-center gap-4">
+        <!-- Teks Baris 1: Miring ke kiri -->
+        <span class="inline-block bg-green-500 text-gray-900 px-8 py-1 transform -rotate-3 hover:-translate-y-2 hover:rotate-0 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]">
+          TI'23
+        </span>
+        <!-- Teks Baris 2: Miring ke kanan -->
+        <span class="inline-block bg-white text-gray-900 px-8 py-1 transform rotate-2 hover:-translate-y-2 hover:rotate-0 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(34,197,94,0.6)]">
+          INSIDERS
+        </span>
       </h1>
       
-      <p class="text-2xl md:text-3xl font-bold mb-6 text-gray-800">
-        How fun we are!
-      </p>
+      <!-- Subtitle Boxed -->
+      <div class="mb-8 transform -rotate-1 hover:rotate-1 transition-transform duration-300">
+        <span class="inline-block px-6 py-3 bg-gray-800 text-white text-2xl md:text-3xl font-bold shadow-[6px_6px_0px_0px_rgba(0,0,0,0.5)] border border-gray-700">
+          How fun we are!
+        </span>
+      </div>
       
-      <p class="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto font-medium">
+      <!-- Description Panel -->
+      <p class="text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto font-medium bg-gray-900/60 p-6 rounded-none border-l-4 border-green-500 backdrop-blur-sm shadow-2xl transition-all duration-500 group-hover:bg-gray-900/80">
         Digital Yearbook Angkatan TI 2023 ITTS - Tempat nongkrong digital yang nyimpen semua memori, dari yang keren sampai aib legendaris!
       </p>
       
-      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <!-- Call to Action Buttons (Neo-Brutalism Style) -->
+      <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mt-4">
         <a 
           href="#episodes" 
-          class="btn-primary"
+          class="px-8 py-4 bg-green-500 text-gray-900 font-black uppercase tracking-wider transform hover:-translate-y-1 hover:scale-105 transition-all duration-200 shadow-[6px_6px_0px_0px_rgba(255,255,255,0.2)] active:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)] active:translate-y-1"
         >
           Stalk Our Momen
         </a>
         
         <a 
           href="#timebox" 
-          class="btn-secondary"
+          class="px-8 py-4 bg-white text-gray-900 font-black uppercase tracking-wider transform hover:-translate-y-1 hover:scale-105 transition-all duration-200 shadow-[6px_6px_0px_0px_rgba(34,197,94,0.6)] active:shadow-[2px_2px_0px_0px_rgba(34,197,94,0.6)] active:translate-y-1"
         >
           Perjalanan Kita
         </a>
       </div>
+
     </div>
   </section>
 </template>
 
 <script setup>
-const memoryImages = [
-  'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1531545514256-b1400bc00f31?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1513258496099-48168024aec0?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=400&fit=crop',
-]
+// Script setup dikosongkan sesuai template awal, bisa ditambahkan logika jika diperlukan nanti
 </script>
 
 <style scoped>
-.btn-primary {
-  @apply px-8 py-3 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 transition duration-300 text-lg shadow-lg;
-}
-
-.btn-secondary {
-  @apply px-8 py-3 bg-gray-900 text-white font-bold rounded-md hover:bg-gray-800 transition duration-300 text-lg shadow-lg;
-}
-
-h1 {
-  line-height: 1.1;
-}
-
-@keyframes scroll {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-20%);
-  }
-}
-
-.animate-scroll {
-  animation: scroll 60s linear infinite;
+/* Opsional: memastikan font-display diterapkan, jika di tailwind.config.js belum disetting */
+.font-display {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 </style>
