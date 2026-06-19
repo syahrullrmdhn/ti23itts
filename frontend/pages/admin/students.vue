@@ -207,6 +207,7 @@ const saving = ref(false)
 const showModal = ref(false)
 const editMode = ref(false)
 const errorMessage = ref('')
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024
 const photoFile = ref<File | null>(null)
 const aibPhotoFile = ref<File | null>(null)
 const photoPreview = ref('')
@@ -239,7 +240,13 @@ const filteredStudents = computed(() => {
 })
 const headers = computed(() => ({ Authorization: `Bearer ${auth.token.value}` }))
 const formatBirthDate = (date: string | null) => date ? new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium' }).format(new Date(`${date}T00:00:00`)) : '—'
-const apiError = (error: any) => Object.values(error?.data?.errors || {}).flat().join('\n') || error?.data?.message || error?.message || 'Proses gagal.'
+const apiError = (error: any) => {
+  if (error?.status === 413 || error?.response?.status === 413) {
+    return 'Ukuran file terlalu besar. Tolong upload gambar yang lebih kecil dari 5 MB ya.'
+  }
+
+  return Object.values(error?.data?.errors || {}).flat().join('\n') || error?.data?.message || error?.message || 'Proses gagal.'
+}
 const releasePreview = (preview: string) => {
   if (preview.startsWith('blob:')) URL.revokeObjectURL(preview)
 }
@@ -255,6 +262,12 @@ const selectPhoto = (event: Event, type: 'photo' | 'aib_photo') => {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0] || null
   if (!file) return
+
+  if (file.size > MAX_IMAGE_SIZE) {
+    errorMessage.value = 'Ukuran file terlalu besar. Maksimal 5 MB untuk foto mahasiswa.'
+    input.value = ''
+    return
+  }
 
   const targetPreview = type === 'photo' ? photoPreview : aibPhotoPreview
   releasePreview(targetPreview.value)
@@ -276,12 +289,14 @@ const loadStudents = async () => {
 }
 const openAddModal = () => {
   editMode.value = false
+  errorMessage.value = ''
   resetPhotos()
   form.value = emptyForm()
   showModal.value = true
 }
 const openEditModal = (student: Student) => {
   editMode.value = true
+  errorMessage.value = ''
   resetPhotos()
   form.value = { ...emptyForm(), ...student }
   photoPreview.value = student.photo ? mediaUrl(student.photo) : ''
@@ -295,6 +310,7 @@ const closeModal = () => {
 }
 const saveStudent = async () => {
   saving.value = true
+  errorMessage.value = ''
   try {
     const payload = new FormData()
     for (const [key, value] of Object.entries(form.value)) {

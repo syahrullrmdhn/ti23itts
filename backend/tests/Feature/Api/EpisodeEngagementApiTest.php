@@ -107,4 +107,59 @@ class EpisodeEngagementApiTest extends TestCase
                 'is_top_banyak_dicari' => true,
             ]);
     }
+
+    public function test_student_can_edit_and_delete_own_comment_using_saved_nim_identity(): void
+    {
+        $episode = Episode::create([
+            'category' => 'DRAMA',
+            'title' => 'Komentar Episode',
+            'image' => 'https://example.com/image.jpg',
+            'media_type' => 'image',
+            'media_source' => 'url',
+            'video_url' => null,
+            'short_description' => 'Short',
+            'full_description' => 'Full',
+            'date' => 'Juni 2026',
+            'participants' => 'TI23',
+        ]);
+
+        Student::create([
+            'nim' => '1002230001',
+            'name' => 'Mahasiswa Aktif',
+            'role' => "Mahasiswa TI '23",
+            'status' => 'Aktif',
+        ]);
+
+        Student::create([
+            'nim' => '1002230002',
+            'name' => 'Teman Lain',
+            'role' => "Mahasiswa TI '23",
+            'status' => 'Aktif',
+        ]);
+
+        $commentId = $this->postJson("/api/episodes/{$episode->id}/comment", [
+            'nim' => '1002230001',
+            'comment' => 'Komentar awal',
+        ])->assertCreated()->json('comment.id');
+
+        $this->putJson("/api/episodes/{$episode->id}/comment/{$commentId}", [
+            'nim' => '1002230001',
+            'comment' => 'Komentar sudah diedit',
+        ])->assertOk()
+            ->assertJsonPath('comment.comment', 'Komentar sudah diedit');
+
+        $this->putJson("/api/episodes/{$episode->id}/comment/{$commentId}", [
+            'nim' => '1002230002',
+            'comment' => 'Mau ambil komentar orang',
+        ])->assertStatus(422);
+
+        $this->deleteJson("/api/episodes/{$episode->id}/comment/{$commentId}", [
+            'nim' => '1002230002',
+        ])->assertStatus(422);
+
+        $this->deleteJson("/api/episodes/{$episode->id}/comment/{$commentId}", [
+            'nim' => '1002230001',
+        ])->assertOk()
+            ->assertJsonPath('comments_count', 0);
+    }
 }

@@ -224,6 +224,7 @@ const heroPhotos = ref<Array<{ id: number; path: string }>>([])
 const heroUploading = ref(false)
 const heroDeletingId = ref<number | null>(null)
 const errorMessage = ref('')
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024
 
 type DashboardResponse = {
   stats: {
@@ -246,6 +247,10 @@ const requestHeaders = computed(() => ({
 }))
 
 const apiError = (error: any) => {
+  if (error?.status === 413 || error?.response?.status === 413) {
+    return 'Ukuran file terlalu besar. Tolong upload gambar yang lebih kecil dari 5 MB ya.'
+  }
+
   const validationErrors = error?.data?.errors
   if (validationErrors) {
     return Object.values(validationErrors).flat().join('\n')
@@ -262,6 +267,12 @@ const uploadHeroPhoto = async (event: Event) => {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
+
+  if (file.size > MAX_IMAGE_SIZE) {
+    errorMessage.value = 'Ukuran file terlalu besar. Maksimal 5 MB untuk foto hero.'
+    input.value = ''
+    return
+  }
 
   heroUploading.value = true
   errorMessage.value = ''

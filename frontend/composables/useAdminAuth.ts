@@ -25,7 +25,7 @@ export const useAdminAuth = () => {
   const isAuthenticated = computed(() => Boolean(token.value))
 
   const persist = () => {
-    if (!import.meta.client) {
+    if (process.server) {
       return
     }
 
@@ -59,7 +59,7 @@ export const useAdminAuth = () => {
   }
 
   const restore = () => {
-    if (!import.meta.client || initialized.value) {
+    if (process.server || initialized.value) {
       return
     }
 

@@ -256,6 +256,61 @@ class EpisodeController extends Controller
         ], 201);
     }
 
+    public function updateComment(Request $request, string $episodeId, string $commentId)
+    {
+        $episode = Episode::findOrFail($episodeId);
+        $student = $this->resolveStudentByNim($request);
+        $validated = $request->validate([
+            'comment' => 'required|string|max:1000',
+        ]);
+
+        $comment = EpisodeComment::query()
+            ->where('episode_id', $episode->id)
+            ->where('id', $commentId)
+            ->firstOrFail();
+
+        if ($comment->student_nim !== $student->nim) {
+            throw ValidationException::withMessages([
+                'nim' => 'Kamu hanya bisa mengedit komentar milikmu sendiri.',
+            ]);
+        }
+
+        $comment->update([
+            'comment' => $validated['comment'],
+            'student_name' => $student->name,
+        ]);
+
+        return response()->json([
+            'message' => 'Komentar berhasil diperbarui.',
+            'comment' => $comment->fresh(),
+            'comments_count' => $episode->comments()->count(),
+        ]);
+    }
+
+    public function destroyComment(Request $request, string $episodeId, string $commentId)
+    {
+        $episode = Episode::findOrFail($episodeId);
+        $student = $this->resolveStudentByNim($request);
+
+        $comment = EpisodeComment::query()
+            ->where('episode_id', $episode->id)
+            ->where('id', $commentId)
+            ->firstOrFail();
+
+        if ($comment->student_nim !== $student->nim) {
+            throw ValidationException::withMessages([
+                'nim' => 'Kamu hanya bisa menghapus komentar milikmu sendiri.',
+            ]);
+        }
+
+        $comment->delete();
+
+        return response()->json([
+            'message' => 'Komentar berhasil dihapus.',
+            'comments_count' => $episode->comments()->count(),
+        ]);
+    }
+
     private function resolveStudentByNim(Request $request): Student
     {
         $validated = $request->validate([

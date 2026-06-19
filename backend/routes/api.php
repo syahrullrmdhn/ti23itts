@@ -18,6 +18,8 @@ Route::get('/students/{id}/public', [StudentController::class, 'publicShow']);
 Route::get('/episodes', [EpisodeController::class, 'index']);
 Route::post('/episodes/{id}/like', [EpisodeController::class, 'like']);
 Route::post('/episodes/{id}/comment', [EpisodeController::class, 'comment']);
+Route::put('/episodes/{episodeId}/comment/{commentId}', [EpisodeController::class, 'updateComment']);
+Route::delete('/episodes/{episodeId}/comment/{commentId}', [EpisodeController::class, 'destroyComment']);
 Route::get('/timeline', [TimelineController::class, 'index']);
 Route::get('/hero-photos', [HeroPhotoController::class, 'index']);
 

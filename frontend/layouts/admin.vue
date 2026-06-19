@@ -11,26 +11,33 @@
     <!-- Overlay untuk nutup sidebar di layar HP -->
     <div 
       v-if="sidebarOpen" 
-      class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-40 lg:hidden" 
+      class="fixed inset-0 z-40 bg-gray-900/60 backdrop-blur-sm lg:hidden"
       @click="sidebarOpen = false"
     ></div>
 
     <!-- Main Content Wrapper -->
-    <div class="flex-1 flex flex-col min-w-0 transition-all duration-300 lg:ml-72">
+    <div class="flex min-w-0 flex-1 flex-col transition-all duration-300 lg:ml-72">
       
       <!-- Mobile Header (Hamburger Menu) - Hanya muncul di HP -->
-      <header class="lg:hidden bg-white border-b-4 border-gray-900 p-4 flex justify-between items-center sticky top-0 z-30 shadow-sm">
-        <div class="font-black uppercase tracking-widest text-lg text-gray-900">Markas Admin</div>
+      <header class="sticky top-0 z-30 flex items-center justify-between border-b-4 border-gray-900 bg-white p-4 shadow-sm lg:hidden">
+        <div class="min-w-0">
+          <div class="font-black uppercase tracking-widest text-lg text-gray-900">Markas Admin</div>
+          <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500">TI'23 ITTS</p>
+        </div>
         <button 
           @click="sidebarOpen = true" 
-          class="bg-green-500 border-2 border-gray-900 px-4 py-2 text-sm font-black uppercase shadow-[2px_2px_0px_0px_rgba(17,24,39,1)] active:translate-y-0.5 active:translate-x-0.5 active:shadow-[0px_0px_0px_0px_rgba(17,24,39,1)]"
+          class="flex items-center gap-2 bg-green-500 border-2 border-gray-900 px-4 py-2 text-sm font-black uppercase shadow-[2px_2px_0px_0px_rgba(17,24,39,1)] active:translate-y-0.5 active:translate-x-0.5 active:shadow-[0px_0px_0px_0px_rgba(17,24,39,1)]"
+          aria-label="Buka menu admin"
         >
-          MENU
+          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+          Menu
         </button>
       </header>
 
       <!-- Tempat konten halaman di-render (seperti dashboard, students, dll) -->
-      <main class="flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-8">
+      <main class="flex-1 overflow-x-hidden p-3 sm:p-6 lg:p-8">
         <slot />
       </main>
       
@@ -39,7 +46,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+
+const route = useRoute()
 
 const sidebarOpen = ref(false)
 
@@ -49,10 +58,13 @@ const auth = useAdminAuth()
 const handleLogout = async () => {
   try {
     await auth.logout()
-    // Arahkan kembali ke halaman login (index admin)
     navigateTo('/admin')
   } catch (error) {
     console.error('Logout gagal', error)
   }
 }
+
+watch(() => route.fullPath, () => {
+  sidebarOpen.value = false
+})
 </script>

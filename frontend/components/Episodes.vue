@@ -1,6 +1,36 @@
 <template>
   <section id="episodes" class="border-y-4 border-white bg-gray-800 py-24 text-white">
     <div class="container mx-auto px-4">
+      <Transition
+        enter-active-class="transition duration-300 ease-out"
+        enter-from-class="translate-y-3 opacity-0"
+        enter-to-class="translate-y-0 opacity-100"
+        leave-active-class="transition duration-200 ease-in"
+        leave-from-class="translate-y-0 opacity-100"
+        leave-to-class="translate-y-3 opacity-0"
+      >
+        <div
+          v-if="feedbackMessage"
+          class="fixed bottom-6 right-6 z-[10000] w-[calc(100vw-2rem)] max-w-md border-4 border-gray-900 bg-white p-5 text-gray-900 shadow-[8px_8px_0px_0px_rgba(34,197,94,1)]"
+        >
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="inline-block -rotate-1 border-2 border-gray-900 bg-green-500 px-3 py-1 text-xs font-black uppercase tracking-[0.2em]">
+                Info
+              </p>
+              <p class="mt-4 text-sm font-black leading-relaxed sm:text-base">{{ feedbackMessage }}</p>
+            </div>
+            <button
+              type="button"
+              class="flex h-10 w-10 shrink-0 items-center justify-center border-2 border-gray-900 bg-gray-900 font-black text-white transition-colors hover:bg-red-500"
+              @click="clearFeedback"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      </Transition>
+
       <div v-reveal="'up'" class="mb-16 flex flex-col items-center text-center">
         <h2 class="mb-6 flex flex-col items-center gap-2 font-display text-5xl font-black md:text-7xl">
           <span class="inline-block rotate-2 bg-green-500 px-6 py-1 text-gray-900 shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
@@ -152,16 +182,36 @@
               <div class="mt-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
                 <div class="border-4 border-white bg-white p-5 text-gray-900 shadow-[6px_6px_0px_0px_rgba(34,197,94,1)]">
                   <p class="text-sm font-black uppercase tracking-[0.2em] text-gray-500">Dukung Episode Ini</p>
-                  <label class="mt-5 block">
-                    <span class="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-gray-500">Masukkan NIM Sekali Aja</span>
-                    <input v-model="engagementNim" type="text" class="w-full border-2 border-gray-900 px-4 py-3 font-bold outline-none focus:border-green-500" placeholder="1002230xxx">
-                  </label>
+                  <div class="mt-5 border-2 border-gray-900 bg-gray-50 p-4">
+                    <template v-if="savedNim">
+                      <p class="text-xs font-black uppercase tracking-[0.2em] text-gray-500">Identitas Aktif</p>
+                      <p class="mt-2 text-lg font-black text-gray-900">{{ savedNim }}</p>
+                      <p class="mt-1 text-sm font-bold text-gray-600">NIM ini bakal dipakai buat like dan komentar sampai kamu ganti.</p>
+                      <button
+                        type="button"
+                        class="mt-4 border-2 border-gray-900 bg-white px-4 py-2 text-xs font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:bg-green-500"
+                        @click="resetSavedNim"
+                      >
+                        Ganti NIM
+                      </button>
+                    </template>
+
+                    <form v-else class="space-y-3" @submit.prevent="saveNimIdentity">
+                      <label class="block">
+                        <span class="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-gray-500">Isi NIM Kamu Dulu</span>
+                        <input v-model="nimDraft" type="text" class="w-full border-2 border-gray-900 px-4 py-3 font-bold outline-none focus:border-green-500" placeholder="1002230xxx">
+                      </label>
+                      <button type="submit" class="w-full border-4 border-gray-900 bg-gray-900 px-4 py-3 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(34,197,94,1)] transition-all hover:-translate-y-1 hover:bg-green-500 hover:text-gray-900">
+                        Simpan NIM
+                      </button>
+                    </form>
+                  </div>
                   <div class="mt-4 flex gap-3 text-sm font-black uppercase">
                     <span>❤️ {{ selectedEpisode.likesCount }} Likes</span>
                     <span>💬 {{ selectedEpisode.commentsCount }} Komentar</span>
                   </div>
                   <form class="mt-5 space-y-4" @submit.prevent="submitLike">
-                    <button type="submit" class="w-full border-4 border-gray-900 bg-gray-900 px-4 py-3 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(34,197,94,1)] transition-all hover:-translate-y-1 hover:bg-green-500 hover:text-gray-900">
+                    <button type="submit" :disabled="!savedNim || likeLoading" class="w-full border-4 border-gray-900 bg-gray-900 px-4 py-3 font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(34,197,94,1)] transition-all hover:-translate-y-1 hover:bg-green-500 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50">
                       {{ likeLoading ? 'Menyimpan Like...' : 'Like Sekarang' }}
                     </button>
                     <p class="text-xs font-bold text-gray-500">1 NIM cuma bisa like 1 kali per episode.</p>
@@ -172,22 +222,56 @@
                   <p class="text-sm font-black uppercase tracking-[0.2em] text-gray-300">Komentar Teman-teman</p>
                   <form class="mt-5 space-y-4 border-b-2 border-gray-700 pb-5" @submit.prevent="submitComment">
                     <label class="block">
-                      <span class="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-gray-400">Komentar</span>
-                      <textarea v-model="commentForm.comment" rows="4" class="w-full resize-none border-2 border-white bg-gray-900 px-4 py-3 font-bold text-white outline-none focus:border-green-500" placeholder="Tulis pesan kamu buat episode ini..."></textarea>
+                      <span class="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-gray-400">
+                        {{ editingCommentId ? 'Edit Komentar' : 'Komentar' }}
+                      </span>
+                      <textarea v-model="commentForm.comment" rows="4" class="w-full resize-none border-2 border-white bg-gray-900 px-4 py-3 font-bold text-white outline-none focus:border-green-500" :placeholder="editingCommentId ? 'Perbarui komentar kamu...' : 'Tulis pesan kamu buat episode ini...'"></textarea>
                     </label>
-                    <button type="submit" class="w-full border-4 border-white bg-white px-4 py-3 font-black uppercase text-gray-900 shadow-[4px_4px_0px_0px_rgba(34,197,94,1)] transition-all hover:-translate-y-1 hover:bg-green-500">
-                      {{ commentLoading ? 'Mengirim Komentar...' : 'Kirim Komentar' }}
-                    </button>
+                    <div class="flex flex-col gap-3 sm:flex-row">
+                      <button type="submit" :disabled="!savedNim || commentLoading" class="w-full border-4 border-white bg-white px-4 py-3 font-black uppercase text-gray-900 shadow-[4px_4px_0px_0px_rgba(34,197,94,1)] transition-all hover:-translate-y-1 hover:bg-green-500 disabled:cursor-not-allowed disabled:opacity-50">
+                        {{ commentLoading ? (editingCommentId ? 'Menyimpan Edit...' : 'Mengirim Komentar...') : (editingCommentId ? 'Simpan Perubahan' : 'Kirim Komentar') }}
+                      </button>
+                      <button
+                        v-if="editingCommentId"
+                        type="button"
+                        class="w-full border-4 border-gray-700 bg-gray-900 px-4 py-3 font-black uppercase text-white transition-all hover:-translate-y-1 hover:border-white"
+                        @click="cancelCommentEdit"
+                      >
+                        Batal Edit
+                      </button>
+                    </div>
                     <p class="text-xs font-bold text-gray-400">1 NIM cuma bisa komentar 1 kali per episode.</p>
                   </form>
 
                   <div class="mt-5 space-y-4">
                     <article v-for="comment in selectedEpisode.comments" :key="comment.id" class="border-2 border-gray-700 bg-gray-900 p-4">
                       <div class="flex flex-wrap items-center justify-between gap-3">
-                        <p class="font-black uppercase text-green-400">{{ comment.student_name }} • {{ comment.student_nim }}</p>
-                        <p class="text-xs font-black uppercase tracking-[0.2em] text-gray-500">{{ formatCommentTime(comment.created_at) }}</p>
+                        <div>
+                          <p class="font-black uppercase text-green-400">{{ comment.student_name }}</p>
+                          <p v-if="comment.updated_at && comment.updated_at !== comment.created_at" class="mt-1 text-[10px] font-black uppercase tracking-[0.2em] text-yellow-300">
+                            Sudah diedit
+                          </p>
+                        </div>
+                        <p class="text-xs font-black uppercase tracking-[0.2em] text-gray-500">{{ formatCommentTime(comment.updated_at || comment.created_at) }}</p>
                       </div>
                       <p class="mt-3 text-sm font-bold leading-relaxed text-gray-200">{{ comment.comment }}</p>
+                      <div v-if="isOwnComment(comment)" class="mt-4 flex flex-wrap gap-3">
+                        <button
+                          type="button"
+                          class="border-2 border-white bg-white px-3 py-2 text-xs font-black uppercase text-gray-900 shadow-[2px_2px_0px_0px_rgba(34,197,94,1)] transition-all hover:-translate-y-1 hover:bg-green-500"
+                          @click="startCommentEdit(comment)"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          :disabled="commentLoading"
+                          class="border-2 border-red-400 bg-transparent px-3 py-2 text-xs font-black uppercase text-red-300 transition-all hover:-translate-y-1 hover:bg-red-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                          @click="deleteComment(comment)"
+                        >
+                          Hapus
+                        </button>
+                      </div>
                     </article>
 
                     <div v-if="!selectedEpisode.comments.length" class="border-2 border-dashed border-gray-700 bg-gray-900 p-5 text-center font-bold text-gray-400">
@@ -211,11 +295,15 @@ const config = useRuntimeConfig()
 const { mediaUrl } = useApiMedia()
 const episodes = ref([])
 const selectedEpisode = ref(null)
-const engagementNim = ref('')
+const NIM_STORAGE_KEY = 'ti23itts-episode-nim'
+const savedNim = ref('')
+const nimDraft = ref('')
 const commentForm = ref({ comment: '' })
+const editingCommentId = ref(null)
 const likeLoading = ref(false)
 const commentLoading = ref(false)
 const feedbackMessage = ref('')
+let feedbackTimeout = null
 
 const normalizeEpisode = (episode) => ({
   ...episode,
@@ -232,13 +320,14 @@ const normalizeEpisode = (episode) => ({
 
 const openModal = (episode) => {
   selectedEpisode.value = episode
-  engagementNim.value = ''
   commentForm.value = { comment: '' }
+  editingCommentId.value = null
   feedbackMessage.value = ''
 }
 
 const closeModal = () => {
   selectedEpisode.value = null
+  editingCommentId.value = null
 }
 
 const formatCommentTime = (date) => new Intl.DateTimeFormat('id-ID', {
@@ -260,19 +349,87 @@ const applyEpisodeUpdate = async () => {
 
 const showFeedback = (message) => {
   feedbackMessage.value = message
-  if (import.meta.client) {
-    window.alert(message)
+
+  if (feedbackTimeout) {
+    clearTimeout(feedbackTimeout)
   }
+
+  if (import.meta.client) {
+    feedbackTimeout = window.setTimeout(() => {
+      feedbackMessage.value = ''
+      feedbackTimeout = null
+    }, 3200)
+  }
+}
+
+const clearFeedback = () => {
+  feedbackMessage.value = ''
+
+  if (feedbackTimeout) {
+    clearTimeout(feedbackTimeout)
+    feedbackTimeout = null
+  }
+}
+
+const hydrateSavedNim = () => {
+  if (!import.meta.client) return
+  savedNim.value = localStorage.getItem(NIM_STORAGE_KEY) || ''
+  nimDraft.value = savedNim.value
+}
+
+const saveNimIdentity = () => {
+  const normalizedNim = nimDraft.value.trim()
+  if (!normalizedNim) {
+    showFeedback('Isi NIM kamu dulu ya.')
+    return
+  }
+
+  savedNim.value = normalizedNim
+
+  if (import.meta.client) {
+    localStorage.setItem(NIM_STORAGE_KEY, normalizedNim)
+  }
+
+  showFeedback('NIM berhasil disimpan di browser ini.')
+}
+
+const resetSavedNim = () => {
+  savedNim.value = ''
+  nimDraft.value = ''
+  editingCommentId.value = null
+  commentForm.value = { comment: '' }
+
+  if (import.meta.client) {
+    localStorage.removeItem(NIM_STORAGE_KEY)
+  }
+}
+
+const isOwnComment = (comment) => {
+  return Boolean(savedNim.value) && comment.student_nim === savedNim.value
+}
+
+const startCommentEdit = (comment) => {
+  editingCommentId.value = comment.id
+  commentForm.value = { comment: comment.comment }
+}
+
+const cancelCommentEdit = () => {
+  editingCommentId.value = null
+  commentForm.value = { comment: '' }
 }
 
 const submitLike = async () => {
   if (!selectedEpisode.value) return
+  if (!savedNim.value) {
+    showFeedback('Simpan NIM kamu dulu sebelum like ya.')
+    return
+  }
 
   likeLoading.value = true
   try {
     const response = await $fetch(`${config.public.apiBase}/episodes/${selectedEpisode.value.id}/like`, {
       method: 'POST',
-      body: { nim: engagementNim.value },
+      body: { nim: savedNim.value },
     })
     await applyEpisodeUpdate()
     showFeedback(response.message || 'Like berhasil disimpan.')
@@ -285,21 +442,60 @@ const submitLike = async () => {
 
 const submitComment = async () => {
   if (!selectedEpisode.value) return
+  if (!savedNim.value) {
+    showFeedback('Simpan NIM kamu dulu sebelum komentar ya.')
+    return
+  }
 
   commentLoading.value = true
   try {
-    const response = await $fetch(`${config.public.apiBase}/episodes/${selectedEpisode.value.id}/comment`, {
-      method: 'POST',
+    const isEditing = Boolean(editingCommentId.value)
+    const response = await $fetch(
+      isEditing
+        ? `${config.public.apiBase}/episodes/${selectedEpisode.value.id}/comment/${editingCommentId.value}`
+        : `${config.public.apiBase}/episodes/${selectedEpisode.value.id}/comment`,
+      {
+      method: isEditing ? 'PUT' : 'POST',
       body: {
-        nim: engagementNim.value,
+        nim: savedNim.value,
         comment: commentForm.value.comment,
       },
     })
     await applyEpisodeUpdate()
     commentForm.value = { comment: '' }
+    editingCommentId.value = null
     showFeedback(response.message || 'Komentar berhasil dikirim.')
   } catch (error) {
     showFeedback(error?.data?.errors ? Object.values(error.data.errors).flat().join('\n') : (error?.data?.message || error?.message || 'Gagal mengirim komentar.'))
+  } finally {
+    commentLoading.value = false
+  }
+}
+
+const deleteComment = async (comment) => {
+  if (!selectedEpisode.value) return
+  if (!savedNim.value) {
+    showFeedback('Simpan NIM kamu dulu sebelum hapus komentar ya.')
+    return
+  }
+
+  commentLoading.value = true
+  try {
+    const response = await $fetch(`${config.public.apiBase}/episodes/${selectedEpisode.value.id}/comment/${comment.id}`, {
+      method: 'DELETE',
+      body: {
+        nim: savedNim.value,
+      },
+    })
+    await applyEpisodeUpdate()
+
+    if (editingCommentId.value === comment.id) {
+      cancelCommentEdit()
+    }
+
+    showFeedback(response.message || 'Komentar berhasil dihapus.')
+  } catch (error) {
+    showFeedback(error?.data?.errors ? Object.values(error.data.errors).flat().join('\n') : (error?.data?.message || error?.message || 'Gagal menghapus komentar.'))
   } finally {
     commentLoading.value = false
   }
@@ -311,6 +507,7 @@ watch(selectedEpisode, (episode) => {
 })
 
 onMounted(async () => {
+  hydrateSavedNim()
   try {
     await applyEpisodeUpdate()
   } catch (error) {
@@ -321,6 +518,11 @@ onMounted(async () => {
 onUnmounted(() => {
   if (import.meta.client) {
     document.body.style.overflow = ''
+  }
+
+  if (feedbackTimeout) {
+    clearTimeout(feedbackTimeout)
+    feedbackTimeout = null
   }
 })
 </script>
