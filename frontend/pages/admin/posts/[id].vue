@@ -104,7 +104,7 @@ const loadPost = async () => {
   errorMessage.value = ''
 
   try {
-    const post = await $fetch<PostApi>(`${config.public.apiBase}/posts/${route.params.id}`, {
+    const post = await $fetch<PostApi>(`${config.public.apiBase}/admin/posts/${route.params.id}`, {
       headers: requestHeaders.value,
     })
 

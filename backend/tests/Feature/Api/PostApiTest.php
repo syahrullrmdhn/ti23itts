@@ -69,6 +69,11 @@ class PostApiTest extends TestCase
             ->assertOk()
             ->assertJsonFragment(['id' => $postId, 'title' => 'Cerita Kedua Update']);
 
+        $this->getJson("/api/admin/posts/{$postId}")
+            ->assertOk()
+            ->assertJsonPath('id', $postId)
+            ->assertJsonPath('title', 'Cerita Kedua Update');
+
         $this->deleteJson("/api/posts/{$postId}")
             ->assertNoContent();
     }

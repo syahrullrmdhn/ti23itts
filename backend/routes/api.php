@@ -40,10 +40,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/audit-logs', [AuditLogController::class, 'index']);
     Route::get('/admin/students', [StudentController::class, 'adminIndex']);
     Route::get('/admin/posts', [PostController::class, 'adminIndex']);
+    Route::get('/admin/posts/{post}', [PostController::class, 'show']);
 
     Route::apiResource('students', StudentController::class)->except(['index']);
     Route::apiResource('episodes', EpisodeController::class)->except(['index']);
-    Route::apiResource('posts', PostController::class)->except(['index']);
+    Route::apiResource('posts', PostController::class)->except(['index', 'show']);
     Route::apiResource('semesters', SemesterController::class);
     Route::post('/hero-photos', [HeroPhotoController::class, 'store']);
     Route::delete('/hero-photos/{id}', [HeroPhotoController::class, 'destroy']);
