@@ -152,5 +152,6 @@ class DatabaseSeeder extends Seeder
             Episode::create($episode);
         }
 
+        $this->call(MountainStorySeeder::class);
     }
 }
