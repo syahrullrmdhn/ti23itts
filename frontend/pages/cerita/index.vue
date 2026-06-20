@@ -37,7 +37,7 @@
             class="group overflow-hidden border-4 border-white bg-white text-gray-900 shadow-[8px_8px_0px_0px_rgba(34,197,94,1)] transition-all hover:-translate-y-2"
           >
             <div class="aspect-[16/10] overflow-hidden border-b-4 border-gray-900 bg-gray-900">
-              <img :src="post.coverImage" :alt="post.title" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+              <img :src="post.coverImage" :alt="post.title" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
             </div>
 
             <div class="space-y-4 p-6">
@@ -127,5 +127,31 @@ useSeoMeta({
   twitterTitle: "Cerita TI'23 ITTS",
   twitterDescription: 'Baca kumpulan cerita, nostalgia, dan catatan seru dari perjalanan TI’23 ITTS.',
   twitterImage: `${config.public.siteUrl}/social-preview.svg`,
+})
+
+useHead({
+  link: [
+    { rel: 'canonical', href: `${config.public.siteUrl}/cerita` },
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: computed(() => JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Blog',
+        name: "Cerita TI'23 ITTS",
+        url: `${config.public.siteUrl}/cerita`,
+        description: 'Kumpulan cerita, nostalgia, dan catatan perjalanan TI’23 ITTS.',
+        inLanguage: 'id-ID',
+        blogPost: (posts.value || []).map((post) => ({
+          '@type': 'BlogPosting',
+          headline: post.title,
+          url: `${config.public.siteUrl}/cerita/${post.slug}`,
+          datePublished: post.published_at || undefined,
+          image: post.coverImage,
+        })),
+      })),
+    },
+  ],
 })
 </script>

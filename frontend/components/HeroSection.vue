@@ -1,11 +1,14 @@
 <template>
   <section id="hero" class="relative flex min-h-screen items-center justify-center overflow-hidden bg-gray-900 text-white">
     
-    <div class="absolute inset-0 z-0 grid grid-cols-2 gap-1 opacity-50 md:grid-cols-4">
+    <div class="absolute inset-0 z-0 grid grid-cols-2 gap-1 opacity-50 md:grid-cols-4" aria-hidden="true">
       <div v-for="(photo, index) in heroPhotos" :key="`${photo}-${index}`" class="aspect-video bg-gray-800 overflow-hidden">
         <img 
           :src="photo"
-          alt="Memories" 
+          alt=""
+          :loading="index < 4 ? 'eager' : 'lazy'"
+          :fetchpriority="index === 0 ? 'high' : 'auto'"
+          decoding="async"
           class="h-full w-full scale-105 object-cover opacity-50 grayscale transition-all duration-500 hover:scale-100 hover:grayscale-0"
         />
       </div>
@@ -16,7 +19,7 @@
     <div class="absolute inset-0 z-0 bg-gray-900/60"></div>
     
     <!-- Hero Content -->
-    <div class="relative z-10 text-center px-4 max-w-6xl mx-auto flex flex-col items-center">
+    <div class="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-4 py-32 text-center sm:px-6">
       
       <!-- Badge / Tagline Awal -->
       <div v-reveal="'zoom'" class="mb-10 transform -rotate-2 transition-transform duration-300 hover:rotate-0">
@@ -26,26 +29,26 @@
       </div>
       
       <!-- Main Title (Boxed Text Style) -->
-      <h1 v-reveal="'up'" class="mb-10 flex flex-col items-center gap-4 font-display text-6xl font-black md:text-8xl lg:text-9xl">
+      <h1 v-reveal="'up'" class="mb-10 flex max-w-full flex-col items-center gap-4 font-display text-5xl font-black sm:text-6xl md:text-8xl lg:text-9xl">
         <!-- Teks Baris 1: Miring ke kiri -->
-        <span class="inline-block bg-green-500 text-gray-900 px-8 py-1 transform -rotate-3 hover:-translate-y-2 hover:rotate-0 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]">
+        <span class="inline-block max-w-full bg-green-500 px-5 py-1 text-gray-900 transform -rotate-3 hover:-translate-y-2 hover:rotate-0 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] sm:px-8">
           TI'23
         </span>
         <!-- Teks Baris 2: Miring ke kanan -->
-        <span class="inline-block bg-white text-gray-900 px-8 py-1 transform rotate-2 hover:-translate-y-2 hover:rotate-0 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(34,197,94,0.6)]">
+        <span class="inline-block max-w-full bg-white px-5 py-1 text-gray-900 transform rotate-2 hover:-translate-y-2 hover:rotate-0 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(34,197,94,0.6)] sm:px-8">
           INSIDERS
         </span>
       </h1>
       
       <!-- Subtitle Boxed -->
       <div v-reveal="'left'" class="mb-8 transform -rotate-1 transition-transform duration-300 hover:rotate-1">
-        <span class="inline-block px-6 py-3 bg-gray-800 text-white text-2xl md:text-3xl font-bold shadow-[6px_6px_0px_0px_rgba(0,0,0,0.5)] border border-gray-700">
+        <span class="inline-block px-5 py-3 bg-gray-800 text-white text-xl sm:text-2xl md:text-3xl font-bold shadow-[6px_6px_0px_0px_rgba(0,0,0,0.5)] border border-gray-700">
           How fun we are!
         </span>
       </div>
       
       <!-- Description Panel -->
-      <p v-reveal="'right'" class="mx-auto mb-12 max-w-2xl border-l-4 border-green-500 bg-gray-900/70 p-6 text-lg font-medium text-gray-300 shadow-2xl backdrop-blur-sm md:text-xl">
+      <p v-reveal="'right'" class="mx-auto mb-12 max-w-2xl border-l-4 border-green-500 bg-gray-900/70 p-4 text-base font-medium text-gray-300 shadow-2xl backdrop-blur-sm sm:p-6 sm:text-lg md:text-xl">
         Digital Yearbook Angkatan TI 2023 Institut Teknologi Tangerang Selatan - Tempat nongkrong digital yang nyimpen semua memori, dari yang keren sampai aib legendaris!
       </p>
       

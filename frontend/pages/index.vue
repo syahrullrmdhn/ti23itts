@@ -17,8 +17,25 @@ useHead({
     {
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap'
+    },
+    {
+      rel: 'canonical',
+      href: config.public.siteUrl
     }
-  ]
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: "TI'23 ITTS Digital Yearbook",
+        url: config.public.siteUrl,
+        description: 'Digital yearbook Angkatan Teknik Informatika 2023 Institut Teknologi Tangerang Selatan.',
+        inLanguage: 'id-ID',
+      }),
+    },
+  ],
 })
 
 useSeoMeta({

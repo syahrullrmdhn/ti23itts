@@ -35,6 +35,8 @@
 </template>
 
 <script setup lang="ts">
+import PostEditorForm from '~/components/admin/PostEditorForm.vue'
+
 type PostApi = {
   id: number
   title: string

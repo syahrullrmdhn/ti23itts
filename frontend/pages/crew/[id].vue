@@ -42,7 +42,7 @@
         <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <section v-reveal="'left'" class="overflow-hidden border-4 border-white bg-gray-800 shadow-[10px_10px_0px_0px_rgba(34,197,94,1)]">
             <div class="relative aspect-square overflow-hidden border-b-4 border-white bg-gray-900">
-              <img :src="activePhoto" :alt="student.name" class="h-full w-full object-cover">
+              <img :src="activePhoto" :alt="student.name" fetchpriority="high" decoding="async" class="h-full w-full object-cover">
               <span class="absolute right-4 top-4 inline-block rotate-3 border-2 border-gray-900 bg-green-500 px-3 py-1 text-xs font-black uppercase tracking-wider text-gray-900 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                 {{ student.status }}
               </span>
@@ -275,6 +275,35 @@ useSeoMeta({
   twitterTitle: crewTitle,
   twitterDescription: crewDescription,
   twitterImage: crewImage,
+})
+
+useHead({
+  link: [
+    { rel: 'canonical', href: crewUrl },
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: computed(() => JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'ProfilePage',
+        name: crewTitle.value,
+        url: crewUrl.value,
+        description: crewDescription.value,
+        mainEntity: student.value ? {
+          '@type': 'Person',
+          name: student.value.name,
+          image: student.value.photo,
+          description: crewDescription.value,
+          affiliation: {
+            '@type': 'EducationalOrganization',
+            name: 'Institut Teknologi Tangerang Selatan',
+          },
+        } : undefined,
+        inLanguage: 'id-ID',
+      })),
+    },
+  ],
 })
 
 const activePhoto = computed(() => {

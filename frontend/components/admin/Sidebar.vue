@@ -97,8 +97,12 @@
         <span class="absolute -top-3 left-3 bg-white px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-gray-900 border-2 border-gray-900">
           Lagi Login
         </span>
-        <p class="mt-1 truncate text-lg font-black text-white">{{ auth.user.value?.name || 'Admin' }}</p>
-        <p class="truncate text-xs font-bold text-gray-400 uppercase tracking-wider mt-1">{{ auth.user.value?.email }}</p>
+        <p class="mt-1 truncate text-lg font-black text-white">
+          {{ auth.initialized.value ? (auth.user.value?.name || 'Admin') : 'Admin' }}
+        </p>
+        <p class="truncate text-xs font-bold text-gray-400 uppercase tracking-wider mt-1">
+          {{ auth.initialized.value ? (auth.user.value?.email || '') : '' }}
+        </p>
       </div>
 
       <button

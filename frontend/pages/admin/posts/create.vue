@@ -30,6 +30,8 @@
 </template>
 
 <script setup lang="ts">
+import PostEditorForm from '~/components/admin/PostEditorForm.vue'
+
 definePageMeta({
   layout: 'admin',
   middleware: 'admin-auth',

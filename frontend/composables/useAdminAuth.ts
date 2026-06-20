@@ -115,6 +115,7 @@ export const useAdminAuth = () => {
   return {
     token,
     user,
+    initialized,
     isAuthenticated,
     restore,
     login,

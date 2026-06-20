@@ -19,7 +19,7 @@
           </div>
           
           <!-- Copywriting yang lebih hangat -->
-          <h1 class="mt-5 max-w-xl text-5xl font-black uppercase leading-none text-gray-900 sm:text-6xl tracking-tight">
+          <h1 class="mt-5 max-w-xl text-3xl font-black uppercase leading-none text-gray-900 sm:text-5xl lg:text-6xl tracking-tight">
             Halo Admin! Siap ngurusin memori TI'23 hari ini? ✨
           </h1>
           
@@ -148,6 +148,11 @@
 <script setup lang="ts">
 definePageMeta({
   middleware: 'admin-guest',
+})
+
+useSeoMeta({
+  title: "Login Admin - TI'23 ITTS",
+  robots: 'noindex, nofollow, noarchive',
 })
 
 const auth = useAdminAuth()

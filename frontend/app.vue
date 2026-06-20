@@ -18,12 +18,22 @@ useHead({
     {
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap'
-    },
-    {
-      rel: 'canonical',
-      href: config.public.siteUrl
     }
-  ]
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: "TI'23 ITTS Digital Yearbook",
+        alternateName: "TI'23 ITTS Insiders",
+        url: config.public.siteUrl,
+        description: defaultDescription,
+        inLanguage: 'id-ID',
+      }),
+    },
+  ],
 })
 
 useSeoMeta({

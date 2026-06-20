@@ -50,6 +50,10 @@ import { ref, watch } from 'vue'
 
 const route = useRoute()
 
+useSeoMeta({
+  robots: 'noindex, nofollow, noarchive',
+})
+
 const sidebarOpen = ref(false)
 
 // Pastikan composable ini sudah sesuai dengan logic auth kamu

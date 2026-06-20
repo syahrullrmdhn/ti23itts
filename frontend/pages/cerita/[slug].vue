@@ -16,7 +16,7 @@
 
       <article v-else-if="post" class="mt-10 overflow-hidden border-4 border-white bg-white text-gray-900 shadow-[10px_10px_0px_0px_rgba(34,197,94,1)]">
         <div class="aspect-[16/8] overflow-hidden border-b-4 border-gray-900 bg-gray-900">
-          <img :src="post.coverImage" :alt="post.title" class="h-full w-full object-cover">
+          <img :src="post.coverImage" :alt="post.title" fetchpriority="high" decoding="async" class="h-full w-full object-cover">
         </div>
 
         <div class="p-6 sm:p-10">
@@ -91,6 +91,32 @@ useSeoMeta({
   twitterDescription: () => post.value?.excerpt || 'Baca cerita nostalgia dan catatan seru dari TI’23 ITTS.',
   twitterImage: () => post.value?.coverImage || `${config.public.siteUrl}/social-preview.svg`,
 })
+
+useHead({
+  link: [
+    { rel: 'canonical', href: `${config.public.siteUrl}/cerita/${route.params.slug}` },
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: computed(() => JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.value?.title || "Cerita TI'23 ITTS",
+        description: post.value?.excerpt || 'Cerita dari perjalanan TI’23 ITTS.',
+        image: post.value?.coverImage || `${config.public.siteUrl}/social-preview.svg`,
+        datePublished: post.value?.published_at || undefined,
+        mainEntityOfPage: `${config.public.siteUrl}/cerita/${route.params.slug}`,
+        publisher: {
+          '@type': 'Organization',
+          name: "TI'23 ITTS",
+          url: config.public.siteUrl,
+        },
+        inLanguage: 'id-ID',
+      })),
+    },
+  ],
+})
 </script>
 
 <style scoped>
@@ -121,5 +147,30 @@ useSeoMeta({
   border-left: 4px solid #22c55e;
   background: #f3f4f6;
   padding: 1rem;
+}
+
+.story-content {
+  overflow-wrap: anywhere;
+}
+
+.story-content :deep(h2),
+.story-content :deep(h3) {
+  margin: 1.5rem 0 0.75rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.story-content :deep(iframe) {
+  margin: 1.5rem 0;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.story-content :deep(pre) {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 1rem;
+  background: #111827;
+  color: white;
 }
 </style>

@@ -45,6 +45,8 @@
               v-if="episode.mediaType === 'image'"
               :src="episode.image"
               :alt="episode.title"
+              fetchpriority="high"
+              decoding="async"
               class="aspect-video w-full object-cover"
             >
             <video
@@ -288,6 +290,32 @@ useSeoMeta({
   twitterTitle: episodeTitle,
   twitterDescription: episodeDescription,
   twitterImage: episodeImage,
+})
+
+useHead({
+  link: [
+    { rel: 'canonical', href: episodeUrl },
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: computed(() => JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: episode.value?.title || "Episode TI'23 ITTS",
+        description: episodeDescription.value,
+        image: episodeImage.value,
+        datePublished: episode.value?.date || undefined,
+        mainEntityOfPage: episodeUrl.value,
+        publisher: {
+          '@type': 'Organization',
+          name: "TI'23 ITTS",
+          url: config.public.siteUrl,
+        },
+        inLanguage: 'id-ID',
+      })),
+    },
+  ],
 })
 
 const showFeedback = (message: string) => {

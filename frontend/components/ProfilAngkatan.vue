@@ -74,12 +74,16 @@
                 v-if="student.photo"
                 :src="student.photo" 
                 :alt="student.name"
+                loading="lazy"
+                decoding="async"
                 class="w-full h-full object-cover transition-all duration-500 group-hover:opacity-0 grayscale group-hover:grayscale-0"
               >
               <img
                 v-if="student.photo"
                 :src="student.aib_photo || student.photo" 
-                :alt="student.name"
+                :alt="`Foto alternatif ${student.name}`"
+                loading="lazy"
+                decoding="async"
                 class="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-all duration-500 scale-110 group-hover:scale-100"
               >
               <div v-else class="flex h-full w-full items-center justify-center bg-green-500 text-gray-900">
