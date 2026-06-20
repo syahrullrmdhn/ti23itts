@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Support\AuditLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -81,6 +82,7 @@ class PostController extends Controller
     {
         return response()->json(
             Post::query()
+                ->withCount('views')
                 ->where('is_published', true)
                 ->orderByDesc('published_at')
                 ->orderByDesc('id')
@@ -92,6 +94,7 @@ class PostController extends Controller
     {
         return response()->json(
             Post::query()
+                ->withCount('views')
                 ->orderByDesc('published_at')
                 ->orderByDesc('id')
                 ->get()
@@ -101,11 +104,37 @@ class PostController extends Controller
     public function showBySlug(string $slug)
     {
         $post = Post::query()
+            ->withCount('views')
             ->where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();
 
         return response()->json($post);
+    }
+
+    public function recordView(Request $request, string $slug)
+    {
+        $validated = $request->validate([
+            'visitor_id' => ['required', 'string', 'max:100'],
+        ]);
+
+        $post = Post::query()
+            ->where('slug', $slug)
+            ->where('is_published', true)
+            ->firstOrFail();
+
+        $visitorHash = hash('sha256', $validated['visitor_id']);
+
+        DB::table('post_views')->insertOrIgnore([
+            'post_id' => $post->id,
+            'visitor_hash' => $visitorHash,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json([
+            'views_count' => $post->views()->count(),
+        ]);
     }
 
     public function store(Request $request)
@@ -127,7 +156,7 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
-        return response()->json($post);
+        return response()->json($post->loadCount('views'));
     }
 
     public function update(Request $request, Post $post)

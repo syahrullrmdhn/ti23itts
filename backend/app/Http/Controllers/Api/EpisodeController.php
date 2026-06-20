@@ -165,6 +165,31 @@ class EpisodeController extends Controller
         );
     }
 
+    public function adminIndex()
+    {
+        $episodes = Episode::query()
+            ->withCount(['likes', 'comments'])
+            ->with([
+                'likes' => fn ($query) => $query
+                    ->orderByDesc('created_at')
+                    ->select(['id', 'episode_id', 'student_nim', 'student_name', 'created_at']),
+                'comments' => fn ($query) => $query->latest(),
+            ])
+            ->orderByDesc('created_at')
+            ->get();
+
+        $topEpisodeId = $this->resolveTopEpisodeId($episodes);
+
+        return response()->json(
+            $episodes->map(function (Episode $episode) use ($topEpisodeId) {
+                return [
+                    ...$episode->toArray(),
+                    'is_top_banyak_dicari' => $episode->id === $topEpisodeId,
+                ];
+            })
+        );
+    }
+
     public function store(Request $request)
     {
         $validated = $this->normalizePayload($request);

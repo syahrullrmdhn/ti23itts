@@ -59,6 +59,9 @@
             <div class="border-2 border-gray-200 bg-gray-50 px-3 py-2">
               Slug: {{ post.slug }}
             </div>
+            <div class="border-2 border-gray-900 bg-green-100 px-3 py-2 text-gray-900">
+              👁 {{ formatViews(post.views_count) }} pembaca
+            </div>
           </div>
 
           <div class="flex gap-2 border-t-2 border-gray-200 pt-4">
@@ -107,6 +110,7 @@ type PostApi = {
   cover_image: string | null
   is_published: boolean
   published_at: string | null
+  views_count: number
 }
 
 type PostCard = PostApi & {
@@ -176,6 +180,8 @@ const formatPublishedAt = (value: string | null) => {
     year: 'numeric',
   }).format(new Date(value))
 }
+
+const formatViews = (value: number | undefined) => new Intl.NumberFormat('id-ID').format(value || 0)
 
 const loadPosts = async () => {
   loading.value = true

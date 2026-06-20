@@ -24,6 +24,7 @@ Route::post('/students/{id}/vote', [StudentController::class, 'vote']);
 Route::get('/episodes', [EpisodeController::class, 'index']);
 Route::get('/episodes/{id}/public', [EpisodeController::class, 'publicShow']);
 Route::get('/posts', [PostController::class, 'index']);
+Route::post('/posts/{slug}/view', [PostController::class, 'recordView']);
 Route::get('/posts/{slug}', [PostController::class, 'showBySlug']);
 Route::post('/episodes/{id}/like', [EpisodeController::class, 'like']);
 Route::post('/episodes/{id}/comment', [EpisodeController::class, 'comment']);
@@ -39,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
     Route::get('/audit-logs', [AuditLogController::class, 'index']);
     Route::get('/admin/students', [StudentController::class, 'adminIndex']);
+    Route::get('/admin/episodes', [EpisodeController::class, 'adminIndex']);
     Route::get('/admin/posts', [PostController::class, 'adminIndex']);
     Route::get('/admin/posts/{post}', [PostController::class, 'show']);
 

@@ -4,7 +4,9 @@ namespace Tests\Feature\Api;
 
 use App\Models\Episode;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class EpisodeEngagementApiTest extends TestCase
@@ -161,5 +163,46 @@ class EpisodeEngagementApiTest extends TestCase
             'nim' => '1002230001',
         ])->assertOk()
             ->assertJsonPath('comments_count', 0);
+    }
+
+    public function test_admin_can_see_who_liked_each_episode(): void
+    {
+        $episode = Episode::create([
+            'category' => 'LEGENDARY',
+            'title' => 'Episode Favorit',
+            'image' => 'https://example.com/image.jpg',
+            'media_type' => 'image',
+            'media_source' => 'url',
+            'video_url' => null,
+            'short_description' => 'Short',
+            'full_description' => 'Full',
+            'date' => 'Juni 2026',
+            'participants' => 'TI23',
+        ]);
+
+        Student::create([
+            'nim' => '1002230001',
+            'name' => 'Mahasiswa Aktif',
+            'role' => "Mahasiswa TI '23",
+            'status' => 'Aktif',
+        ]);
+
+        $this->postJson("/api/episodes/{$episode->id}/like", [
+            'nim' => '1002230001',
+        ])->assertOk();
+
+        $this->getJson('/api/admin/episodes')->assertUnauthorized();
+
+        Sanctum::actingAs(User::create([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'password' => 'passwordaman',
+        ]));
+
+        $this->getJson('/api/admin/episodes')
+            ->assertOk()
+            ->assertJsonPath('0.likes_count', 1)
+            ->assertJsonPath('0.likes.0.student_name', 'Mahasiswa Aktif')
+            ->assertJsonPath('0.likes.0.student_nim', '1002230001');
     }
 }

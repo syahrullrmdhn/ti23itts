@@ -11,4 +11,8 @@ class EpisodeLike extends Model
         'student_nim',
         'student_name',
     ];
+
+    protected $hidden = [
+        'episode_id',
+    ];
 }

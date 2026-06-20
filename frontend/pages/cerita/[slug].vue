@@ -27,6 +27,9 @@
             <span class="inline-block border-2 border-gray-900 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.2em]">
               {{ formatPublishedAt(post.published_at) }}
             </span>
+            <span class="inline-block border-2 border-gray-900 bg-gray-900 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white">
+              👁 {{ formatViews(post.views_count) }} pembaca
+            </span>
           </div>
 
           <h1 class="mt-6 text-4xl font-black uppercase tracking-tight sm:text-5xl">{{ post.title }}</h1>
@@ -56,12 +59,14 @@ type PostDetail = {
   content: string
   cover_image: string | null
   published_at: string | null
+  views_count: number
   coverImage: string
 }
 
 const route = useRoute()
 const config = useRuntimeConfig()
 const { mediaUrl } = useApiMedia()
+const VISITOR_STORAGE_KEY = 'ti23itts-story-visitor-id'
 
 const { data: post, pending } = await useFetch<PostDetail>(`${config.public.apiBase}/posts/${route.params.slug}`, {
   transform: (item) => ({
@@ -79,6 +84,38 @@ const formatPublishedAt = (value: string | null) => {
     year: 'numeric',
   }).format(new Date(value))
 }
+
+const formatViews = (value: number | undefined) => new Intl.NumberFormat('id-ID').format(value || 0)
+
+const getVisitorId = () => {
+  const savedVisitorId = localStorage.getItem(VISITOR_STORAGE_KEY)
+  if (savedVisitorId) return savedVisitorId
+
+  const visitorId = crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`
+
+  localStorage.setItem(VISITOR_STORAGE_KEY, visitorId)
+  return visitorId
+}
+
+onMounted(async () => {
+  if (!post.value) return
+
+  try {
+    const result = await $fetch<{ views_count: number }>(
+      `${config.public.apiBase}/posts/${route.params.slug}/view`,
+      {
+        method: 'POST',
+        body: { visitor_id: getVisitorId() },
+      },
+    )
+
+    post.value.views_count = result.views_count
+  } catch (error) {
+    console.error('Gagal mencatat pembaca cerita', error)
+  }
+})
 
 useSeoMeta({
   title: () => post.value ? `${post.value.title} - Cerita TI'23 ITTS` : "Cerita TI'23 ITTS",

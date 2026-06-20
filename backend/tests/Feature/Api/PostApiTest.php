@@ -77,4 +77,32 @@ class PostApiTest extends TestCase
         $this->deleteJson("/api/posts/{$postId}")
             ->assertNoContent();
     }
+
+    public function test_story_view_counter_counts_unique_visitors(): void
+    {
+        Post::create([
+            'title' => 'Cerita Dilihat',
+            'slug' => 'cerita-dilihat',
+            'excerpt' => 'Ringkas',
+            'content' => 'Konten lengkap',
+            'is_published' => true,
+            'published_at' => now(),
+        ]);
+
+        $this->postJson('/api/posts/cerita-dilihat/view', [
+            'visitor_id' => 'browser-yang-sama',
+        ])->assertOk()->assertJsonPath('views_count', 1);
+
+        $this->postJson('/api/posts/cerita-dilihat/view', [
+            'visitor_id' => 'browser-yang-sama',
+        ])->assertOk()->assertJsonPath('views_count', 1);
+
+        $this->postJson('/api/posts/cerita-dilihat/view', [
+            'visitor_id' => 'browser-yang-berbeda',
+        ])->assertOk()->assertJsonPath('views_count', 2);
+
+        $this->getJson('/api/posts/cerita-dilihat')
+            ->assertOk()
+            ->assertJsonPath('views_count', 2);
+    }
 }

@@ -72,6 +72,15 @@
             </p>
           </div>
 
+          <button
+            type="button"
+            class="flex w-full items-center justify-between border-2 border-gray-900 bg-green-100 px-4 py-3 text-left text-xs font-black uppercase tracking-[0.15em] text-gray-900 transition-all hover:-translate-y-1 hover:bg-green-500"
+            @click="openLikesModal(episode)"
+          >
+            <span>❤️ {{ episode.likes_count }} Likes</span>
+            <span>Lihat Siapa →</span>
+          </button>
+
           <div class="flex gap-2 border-t-2 border-gray-200 pt-4">
             <button
               class="flex-1 border-2 border-gray-900 bg-gray-900 px-4 py-2 text-xs font-black uppercase text-white shadow-[2px_2px_0px_0px_rgba(34,197,94,1)] transition-all hover:-translate-y-1 hover:bg-green-500 hover:text-gray-900"
@@ -210,6 +219,50 @@
       </div>
     </Teleport>
 
+    <Teleport to="body">
+      <div
+        v-if="likesEpisode"
+        class="fixed inset-0 z-[10000] flex min-h-screen items-center justify-center overflow-y-auto bg-gray-900/95 p-4 backdrop-blur-sm"
+        @click="closeLikesModal"
+      >
+        <section
+          class="w-full max-w-2xl border-4 border-gray-900 bg-white p-6 text-gray-900 shadow-[14px_14px_0px_0px_rgba(34,197,94,1)] sm:p-8"
+          @click.stop
+        >
+          <div class="flex items-start justify-between gap-4 border-b-4 border-gray-900 pb-5">
+            <div>
+              <p class="text-xs font-black uppercase tracking-[0.2em] text-green-600">Daftar Likes</p>
+              <h3 class="mt-2 text-2xl font-black uppercase sm:text-3xl">{{ likesEpisode.title }}</h3>
+              <p class="mt-2 font-bold text-gray-600">{{ likesEpisode.likes_count }} mahasiswa menyukai episode ini.</p>
+            </div>
+            <button type="button" class="flex h-11 w-11 shrink-0 items-center justify-center bg-gray-900 font-black text-white hover:bg-red-500" @click="closeLikesModal">
+              X
+            </button>
+          </div>
+
+          <div v-if="likesEpisode.likes.length" class="mt-6 grid max-h-[60vh] gap-3 overflow-y-auto pr-2 sm:grid-cols-2">
+            <article
+              v-for="(like, index) in likesEpisode.likes"
+              :key="like.id"
+              class="flex items-center gap-4 border-2 border-gray-900 bg-gray-50 p-4 shadow-[3px_3px_0px_0px_rgba(17,24,39,1)]"
+            >
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center bg-green-500 font-black text-gray-900">
+                {{ index + 1 }}
+              </span>
+              <div class="min-w-0">
+                <p class="truncate font-black uppercase">{{ like.student_name }}</p>
+                <p class="mt-1 truncate text-xs font-bold uppercase tracking-[0.15em] text-gray-500">{{ like.student_nim }}</p>
+              </div>
+            </article>
+          </div>
+
+          <div v-else class="mt-6 border-2 border-dashed border-gray-400 bg-gray-50 p-8 text-center font-black uppercase text-gray-500">
+            Belum ada yang memberi like.
+          </div>
+        </section>
+      </div>
+    </Teleport>
+
     <div v-if="errorMessage" class="fixed bottom-6 right-6 z-[80] max-w-md border-4 border-gray-900 bg-red-500 p-5 font-bold text-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
       {{ errorMessage }}
       <button class="ml-3 font-black" @click="errorMessage = ''">×</button>
@@ -230,6 +283,15 @@ type EpisodeApi = {
   full_description: string
   date: string
   participants: string
+  likes_count: number
+  likes: EpisodeLike[]
+}
+
+type EpisodeLike = {
+  id: number
+  student_nim: string
+  student_name: string
+  created_at: string
 }
 
 type EpisodeCard = EpisodeApi & {
@@ -256,6 +318,7 @@ const errorMessage = ref('')
 const mediaFile = ref<File | null>(null)
 const previewUrl = ref('')
 const previewType = ref<'image' | 'video'>('image')
+const likesEpisode = ref<EpisodeCard | null>(null)
 
 const emptyForm = () => ({
   id: null as number | null,
@@ -317,7 +380,7 @@ const normalizeEpisode = (episode: EpisodeApi): EpisodeCard => ({
 const loadEpisodes = async () => {
   loading.value = true
   try {
-    const data = await $fetch<EpisodeApi[]>(`${config.public.apiBase}/episodes`, {
+    const data = await $fetch<EpisodeApi[]>(`${config.public.apiBase}/admin/episodes`, {
       headers: requestHeaders.value,
     })
     episodes.value = data.map(normalizeEpisode)
@@ -326,6 +389,14 @@ const loadEpisodes = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const openLikesModal = (episode: EpisodeCard) => {
+  likesEpisode.value = episode
+}
+
+const closeLikesModal = () => {
+  likesEpisode.value = null
 }
 
 const openAddModal = () => {
